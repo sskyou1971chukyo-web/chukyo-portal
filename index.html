@@ -1365,6 +1365,10 @@ footer p { font-size: 12px; opacity: 0.7; }
   padding: 10px 14px;
   cursor: pointer;
   line-height: 1;
+  -webkit-tap-highlight-color: rgba(255,255,255,0.2);
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
 }
 .nav-burger:active { background: rgba(255,255,255,0.1); }
 
@@ -1714,6 +1718,41 @@ footer p { font-size: 12px; opacity: 0.7; }
     if (!inner) return;
     var isOpen = inner.classList.toggle('is-open');
     if (burger) burger.textContent = isOpen ? '✕' : '☰';
+  }
+  /* iOS Safari対策: addEventListenerで明示的にタッチイベントもバインド */
+  document.addEventListener('DOMContentLoaded', function() {
+    var burger = document.getElementById('navBurger');
+    if (burger) {
+      burger.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleNavMenu();
+      });
+      burger.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleNavMenu();
+      });
+    }
+  });
+  /* DOMContentLoadedが既に発火済みの場合のフォールバック */
+  if (document.readyState !== 'loading') {
+    setTimeout(function() {
+      var burger = document.getElementById('navBurger');
+      if (burger && !burger.dataset.bound) {
+        burger.dataset.bound = '1';
+        burger.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleNavMenu();
+        });
+        burger.addEventListener('touchend', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleNavMenu();
+        });
+      }
+    }, 0);
   }
   /* ナビのリンクをタップしたら自動で閉じる */
   document.addEventListener('click', function(e) {
@@ -2304,7 +2343,7 @@ footer p { font-size: 12px; opacity: 0.7; }
       <div class="sc-view-title"><span class="sc-view-title-icon">📸</span>連続写真</div>
     </div>
     <div class="sc-burst-iframe-wrap">
-      <iframe class="sc-burst-iframe" id="sc-burstIframe" allow="autoplay; fullscreen" referrerpolicy="no-referrer" src="./saved_resource.html">
+      <iframe class="sc-burst-iframe" id="sc-burstIframe" allow="autoplay; fullscreen; camera; microphone" referrerpolicy="no-referrer" src="./saved_resource.html">
       </iframe>
     </div>
   </section>
@@ -6576,13 +6615,13 @@ $sc('zoneModal').addEventListener('click', (e) => { if (e.target === $sc('zoneMo
 </style>
 
 <div id="portal-iframe-wrap" class="" style="top: 125px;">
-  <iframe id="portal-iframe" allow="clipboard-read; clipboard-write" referrerpolicy="no-referrer" src="./saved_resource(1).html">
+  <iframe id="portal-iframe" allow="clipboard-read; clipboard-write; camera; microphone; autoplay" referrerpolicy="no-referrer" src="./saved_resource(1).html">
   </iframe>
 </div>
 
 <!-- ★メニュー専用iframe(別アプリ) -->
 <div id="menu-iframe-wrap" style="top: 125px;">
-  <iframe id="menu-iframe" allow="clipboard-read; clipboard-write" referrerpolicy="no-referrer" src="./saved_resource(2).html">
+  <iframe id="menu-iframe" allow="clipboard-read; clipboard-write; camera; microphone; autoplay" referrerpolicy="no-referrer" src="./saved_resource(2).html">
   </iframe>
 </div>
 
