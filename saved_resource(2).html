@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中京大学水泳部 メニュー作成</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&amp;family=Noto+Sans+JP:wght@400;700&amp;family=Bebas+Neue&amp;display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --lh:40px;--lcw:74px;--blue:#005BAC;--red:#B81C22;--red-bright:#E50020;
+  --border:#dde3ea;--bg:#f0f2f5;--white:#fff;--text:#1c2333;--gray:#6b7a8d;
+}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);font-size:14px;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+
+/* ============================================================
+   ヘッダ（タブ切替: メニュー1 / メニュー2）
+   ============================================================ */
+#main-header{flex-shrink:0;background:linear-gradient(135deg,#0d1b2a 0%,#1a3a5f 100%);border-bottom:3px solid #e8341a;padding:0 18px;height:48px;display:flex;align-items:center;gap:14px;}
+.app-logo{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#fff;}
+.app-logo span{color:#e8341a;}
+.app-sub{font:600 10px 'Oswald',sans-serif;letter-spacing:2px;color:#c9a84c;text-transform:uppercase;}
+.tab-switch{display:flex;gap:2px;margin-left:18px;}
+.tab-switch button{background:transparent;border:none;color:#a0bcd8;font:700 12px 'Noto Sans JP',sans-serif;padding:8px 18px;cursor:pointer;border-radius:6px 6px 0 0;border-bottom:3px solid transparent;}
+.tab-switch button.active{background:rgba(255,255,255,.1);color:#fff;border-bottom-color:#e8341a;}
+.tab-switch button:hover:not(.active){color:#fff;}
+
+/* ============================================================
+   各アプリセクション
+   ============================================================ */
+.app-section{display:none;flex:1;flex-direction:column;overflow:hidden;}
+.app-section.visible{display:flex;}
+#app-menu{background:var(--bg);}
+#app-menu2{background:var(--bg);}
+
+/* ============================================================
+   メニュートップバー
+   ============================================================ */
+#menu-topbar{flex-shrink:0;display:flex;flex-direction:column;background:var(--white);border-bottom:2px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.07);z-index:10;}
+#menu-topbar-row1{height:52px;display:flex;align-items:center;gap:10px;padding:0 16px;}
+#menu-topbar-row2{display:none;flex-direction:row;align-items:center;gap:6px;padding:4px 16px;flex-wrap:wrap;background:linear-gradient(to right,#fff8f0,#fff3e8);border-top:1px solid #ffe0b2;}
+#menu-topbar-row2.visible{display:flex;}
+#menu-topbar input[type=date],#menu-topbar input[type=time]{border:1.5px solid var(--border);border-radius:20px;padding:4px 12px;font:700 14px inherit;color:var(--text);background:var(--white);outline:none;color-scheme:light;}
+#menu-topbar input:focus{border-color:var(--blue)}
+.m-tlabel{font:600 12px 'Oswald',sans-serif;color:var(--gray);white-space:nowrap}
+.m-wchip{background:#e3f0ff;border:1.5px solid var(--blue);border-radius:20px;padding:3px 12px;font:700 12px 'Oswald',sans-serif;color:var(--blue);white-space:nowrap}
+.m-spacer{flex:1}
+.m-rpills{display:flex;flex-direction:row;gap:6px;align-items:center;flex-wrap:wrap;flex:1}
+.m-rpill{border:1.5px solid;border-radius:6px;padding:3px 10px;font:700 11px inherit;white-space:nowrap;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:opacity .15s}.m-rpill:hover{opacity:.75}
+.m-tbtn{border:none;border-radius:7px;padding:6px 14px;font:700 12px inherit;cursor:pointer;white-space:nowrap}.m-tbtn:hover{opacity:.85}
+.m-tbtn-blue{background:#1976d2;color:#fff}.m-tbtn-green{background:#388e3c;color:#fff}.m-tbtn-orange{background:#f57c00;color:#fff}
+
+/* ============================================================
+   メニューパネル
+   ============================================================ */
+#menu-panels,#menu2-panels{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;overflow:hidden}
+.m-panel{display:flex;flex-direction:column;border-right:2px solid var(--border);overflow:hidden}.m-panel:last-child{border-right:none}
+.m-gbar{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 10px;background:var(--white);border-bottom:1px solid var(--border);flex-wrap:nowrap;height:44px;}
+.m-gbar-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0;overflow:hidden}
+.m-gbar-name-row{display:contents}
+.m-gname{font:700 18px 'Oswald',sans-serif;min-width:72px;outline:none;cursor:text;border-bottom:2px solid transparent;flex-shrink:0}.m-gname:focus{border-bottom-color:var(--blue)}
+.m-gright{margin-left:auto;display:flex;flex-direction:column;gap:2px;justify-content:center}
+.m-gright-row{display:flex;align-items:center;gap:3px}
+.m-gright-label{font:600 9px 'Noto Sans JP',sans-serif;color:var(--gray);white-space:nowrap;min-width:22px;text-align:right}
+.m-gsel{border:1px solid var(--border);border-radius:12px;padding:1px 18px 1px 6px;font:11px inherit;color:var(--text);background:var(--white);outline:none;cursor:pointer;appearance:none;min-width:60px;max-width:110px;height:22px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='4'%3E%3Cpath d='M0 0l4 4L8 0z' fill='%236b7a8d'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 5px center}.m-gsel:focus{border-color:var(--blue)}
+.m-addbtn{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--blue);background:#e3f0ff;color:var(--blue);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1}.m-addbtn:hover{background:var(--blue);color:#fff}
+.m-pbody{flex:1;display:flex;overflow:hidden}
+.m-lc{width:var(--lcw);flex-shrink:0;overflow-y:scroll;scrollbar-width:none;background:#f8f9fb;border-right:1px solid var(--border);}.m-lc::-webkit-scrollbar{display:none}
+.m-lcrow{height:var(--lh);display:flex;align-items:flex-start;justify-content:flex-end;padding-right:10px;padding-top:calc((var(--lh) - 1.2em) / 2);font:600 14px 'Oswald',sans-serif;white-space:nowrap;flex-shrink:0;box-sizing:border-box;overflow:hidden;}
+.m-lc-t{color:var(--blue)}.m-lc-d{color:var(--red)}
+.m-tcol{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.m-tcol textarea{flex:1;width:100%;border:none;outline:none;resize:none;padding:0 14px;font:italic 15px/var(--lh) 'Meiryo','メイリオ',sans-serif;color:var(--text);background:transparent;tab-size:2;caret-color:var(--blue);overflow-y:scroll;}
+.m-tcol textarea::placeholder{color:#c0c8d4;font-style:italic}
+
+/* パネル合計バー */
+.m-sum-bar{flex-shrink:0;display:none;align-items:center;gap:0;padding:0 14px;height:26px;background:#f0f6ff;border-bottom:1px solid #d0e4f7;overflow:hidden;}
+.m-sum-bar.has-data{display:flex;}
+.m-sum-seg{display:flex;align-items:baseline;gap:4px;padding-right:16px;border-right:1px solid #c8dcf0;margin-right:16px;}
+.m-sum-seg:last-child{border-right:none;margin-right:0;padding-right:0;}
+.m-sum-lbl{font:700 9px 'Oswald',sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:#8aabcc;}
+.m-sum-val{font:700 16px 'Oswald',sans-serif;color:#B81C22;line-height:1;}
+.m-sum-unit{font:600 9px 'Oswald',sans-serif;color:#8aabcc;margin-left:1px;}
+.m-sum-val.blue{color:#005BAC;font-size:13px;}
+
+/* セーブパネル */
+#save-panel{flex-shrink:0;background:#fff;border-bottom:2px solid #dde3ea;z-index:10;display:none;}
+.sp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;}
+.sp-col{padding:14px 16px;border-right:1px solid #dde3ea;}
+.sp-col:last-child{border-right:none;}
+.sp-head{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+.sp-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.sp-title{font:700 12px 'Noto Sans JP',sans-serif;color:#1c2333;}
+.sp-sub{font-size:10px;color:#6b7a8d;margin-top:1px;}
+.sp-chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;}
+.sp-chip{background:#f0f4f8;border:1px solid #dde3ea;border-radius:20px;padding:2px 9px;font-size:11px;color:#4a5568;}
+.sp-chip strong{color:#1c2333;}
+.sp-btn{border:none;border-radius:7px;padding:6px 13px;font:700 11px 'Noto Sans JP',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;transition:opacity .15s;}
+.sp-btn:hover{opacity:.84;}
+.sp-btn-green{background:#1e7e34;color:#fff;}
+.sp-btn-blue{background:#1565c0;color:#fff;}
+.sp-btn-gray{background:#f0f2f5;color:#333;border:1px solid #ccc;}
+.sp-status{font-size:11px;min-height:16px;margin-top:7px;}
+.sp-date-list{max-height:148px;overflow-y:auto;border:1px solid #dde3ea;border-radius:8px;margin-bottom:9px;}
+.sp-date-row{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;cursor:pointer;transition:background .1s;border-bottom:1px solid #f0f2f5;}
+.sp-date-row:last-child{border-bottom:none;}
+.sp-date-row:hover{background:#f5f8ff;}
+.sp-date-row.active{background:#dbeafe;}
+.sp-date-main{font:700 12px 'Oswald',sans-serif;color:#1c2333;letter-spacing:.5px;}
+.sp-date-meta{font-size:10px;color:#6b7a8d;margin-top:1px;}
+.sp-date-lbl{font-size:10px;color:#1a7fd4;white-space:nowrap;flex-shrink:0;}
+.sp-date-row.active .sp-date-main{color:#1565c0;}
+.sp-date-row.active .sp-date-lbl{color:#1565c0;font-weight:700;}
+.sp-local-bar{display:flex;align-items:center;gap:7px;padding:7px 10px;background:#f5f7fa;border-radius:7px;margin-bottom:9px;font-size:11px;color:#556070;}
+.sp-local-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.btn-save-main{background:#1d6fa4;color:#fff;border:none;border-radius:7px;padding:6px 14px;font:700 12px 'Noto Sans JP',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.btn-save-main:hover{opacity:.88;}
+.btn-save-main.active{background:#0d4f80;}
+
+/* モーダル */
+.m-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:2000;align-items:center;justify-content:center}.m-ov.open{display:flex}
+.m-modal{background:var(--white);border-radius:14px;padding:24px 26px;min-width:300px;max-width:440px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.18)}
+.m-modal h3{font-size:15px;font-weight:700;margin-bottom:14px}
+.m-modal p{font-size:12px;color:var(--gray);line-height:1.7;margin-bottom:12px}
+.m-modal input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font:14px inherit;outline:none;margin-bottom:9px}.m-modal input:focus{border-color:var(--blue)}
+.m-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.m-chip{background:#e3f0ff;border:1px solid var(--blue);border-radius:11px;padding:2px 9px;font-size:11px;display:flex;align-items:center;gap:3px}
+.m-chipx{color:var(--red);cursor:pointer;font-weight:700}
+.m-mact{display:flex;gap:7px;justify-content:flex-end;margin-top:6px}
+.m-mact button{border:none;border-radius:7px;padding:7px 18px;font:700 12px inherit;cursor:pointer}
+.m-mbtn-cancel{background:#efefef;color:#555}.m-mbtn-cancel:hover{background:#e0e0e0}
+.m-mbtn-ok{background:var(--blue);color:#fff}.m-mbtn-ok:hover{opacity:.88}
+.m-addinrow{display:flex;gap:5px;margin-bottom:10px}.m-addinrow input{margin-bottom:0;flex:1}
+.m-rpreview{font-size:13px;background:#f5f7fa;border-radius:8px;padding:9px 11px;min-height:72px;max-height:300px;overflow-y:auto}
+.m-rrow{display:flex;align-items:center;justify-content:space-between;padding:7px 8px;border-radius:7px;margin-bottom:2px;gap:8px;transition:background .1s}.m-rrow:hover{background:#f0f4fa}
+
+/* 印刷スタイル */
+@media print{
+  body{height:auto;overflow:visible}
+  #main-header,#menu-topbar,.no-print,#menu-topbar-row2,#menu2-topbar,#save-panel{display:none!important}
+  @page{size:A4 landscape;margin:8mm 8mm}
+  body{overflow:visible;height:auto;background:#fff;margin:0;padding:0}
+  #menu-panels,#menu2-panels{display:none!important}
+  #menu-print-container,#menu2-print-container{display:block!important;width:100%}
+  #menu-print-inner,#menu2-print-inner{display:grid!important;width:100%;height:auto;gap:0;align-items:start}
+  #menu-print-inner.cols-1,#menu2-print-inner.cols-1{grid-template-columns:1fr 12px 1fr}
+  #menu-print-inner.cols-2,#menu2-print-inner.cols-2{grid-template-columns:1fr 12px 1fr}
+  #menu-print-inner.cols-3,#menu2-print-inner.cols-3{grid-template-columns:1fr 8px 1fr 8px 1fr}
+  .m-print-panel{border:1.5px solid #aac4e0;border-radius:6px;break-inside:avoid;overflow:visible;display:block;min-width:0}
+  .m-print-spacer{display:block;min-width:0}
+  .m-gbar{height:auto!important;padding:5px 10px!important;background:#f0f6ff!important;border-bottom:2px solid #1a7fd4!important;display:flex!important;align-items:center!important;gap:6px!important;flex-wrap:nowrap!important}
+  .m-gname{font-size:15px!important;font-weight:900!important}
+  #mm-glabel-print,#ma-glabel-print,#mb-glabel-print,#mc-glabel-print,#md-glabel-print,#me-glabel-print{display:inline-block!important}
+  .m-gsel,.m-addbtn,.m-gright,.m-gright-label{display:none!important}
+  .m-print-race-bar{display:flex!important;flex-direction:column!important;gap:3px!important;padding:5px 8px!important;background:#fff8f0!important;border-bottom:1.5px solid #f5c08a!important;align-items:flex-start!important}
+  .m-print-race-tag{font-size:9px!important;padding:2px 8px!important;white-space:nowrap!important;display:inline-block!important}
+  :root{--lh:22px;--lcw:52px}
+  .m-pbody{display:block!important;overflow:visible!important}
+  .m-lc,.m-tcol textarea{display:none!important}
+  .m-print-body{display:block!important}
+  .m-pl-rows{width:100%}
+  .m-pl-row-wrap{display:flex;align-items:flex-start;min-height:22px}
+  .m-pl-lc-cell{width:52px;flex-shrink:0;border-right:1px solid #dde3ea;background:#f8f9fb;display:flex;align-items:flex-start;justify-content:flex-end;padding:3px 6px 0 0;font:600 10px 'Oswald',sans-serif;white-space:nowrap;box-sizing:border-box}
+  .m-pl-lc-t{color:#1a7fd4}.m-pl-lc-d{color:#e03c3c}
+  .m-pl-text-cell{flex:1;padding:2px 8px;font:italic 11px/20px 'Meiryo','メイリオ',sans-serif;color:#222;white-space:pre-wrap;word-break:break-word;box-sizing:border-box}
+  .m-pl-title{font-weight:700;font-style:normal}
+}
+.m-panel-spacer{display:none}
+#menu-print-container,#menu2-print-container{display:none}
+#mm-glabel-print,#ma-glabel-print,#mb-glabel-print,#mc-glabel-print,#md-glabel-print,#me-glabel-print{display:none}
+.m-print-body{display:none}
+.m-print-race-bar{display:none;flex-direction:column;gap:3px;padding:5px 8px;background:#fff8f0;border-bottom:1px solid #f5c08a}
+.m-print-race-tag{background:#fff3e0;border:1.5px solid #f57c00;border-radius:20px;padding:2px 10px;color:#e65100;white-space:nowrap;font:700 10px 'Noto Sans JP',sans-serif}
+
+/* PDF読込モーダル */
+.pdf-modal{align-items:stretch;padding:0;}
+.pdf-modal-inner{background:#fff;width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     ヘッダ + タブ切替
+     ============================================================ -->
+<div id="main-header">
+  <div class="app-logo">CHUKYO <span>SWIM</span></div>
+  <div class="app-sub">Menu Builder</div>
+  <div class="tab-switch">
+    <button id="tab-m1" class="active" onclick="showApp(&#39;app-menu&#39;)">📝 メニュー作成1</button>
+    <button id="tab-m2" onclick="showApp(&#39;app-menu2&#39;)">📝 メニュー作成2</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     APP1: メニュー作成1
+     ============================================================ -->
+<div id="app-menu" class="app-section visible">
+  <div id="menu-topbar">
+    <div id="menu-topbar-row1">
+      <span style="font-size:18px">📅</span>
+      <input type="date" id="g-date">
+      <span class="m-tlabel">🏁 START:</span>
+      <input type="time" id="g-time" value="10:00">
+      <span class="m-wchip" id="wchip">Week 6</span>
+      <div class="m-spacer"></div>
+      <button class="m-tbtn m-tbtn-orange no-print" onclick="openRaceOv()">🏅 試合データ</button>
+      <button class="m-tbtn no-print" style="background:#9c27b0;color:#fff" onclick="openPdfOv()">📄 PDF読込</button>
+      <button class="m-tbtn m-tbtn-green no-print" onclick="openPrintOv()">🖨️ 印刷</button>
+      <button class="btn-save-main no-print" id="btn-save-main" onclick="toggleSavePanel()">💾 保存・読み込み</button>
+    </div>
+    <div id="menu-topbar-row2" class="visible">
+      <span style="font-size:11px;color:#e65100;font-weight:700;white-space:nowrap;flex-shrink:0">🏅 試合:</span>
+      <div class="m-rpills" id="rpills"><span class="m-rpill" style="border-color:#c62828;color:#c62828">🏅 梅村杯長水路　5/16（残り7日）</span><span class="m-rpill" style="border-color:#e65100;color:#e65100">🏅 日本選手権　6/4（残り26日）</span><span class="m-rpill" style="border-color:#1565c0;color:#1565c0">🏅 インカレ　9/3（残り117日）</span></div>
+    </div>
+  </div>
+
+  <!-- セーブパネル -->
+  <div id="save-panel">
+    <div class="sp-grid">
+      <div class="sp-col">
+        <div class="sp-head">
+          <div class="sp-icon" style="background:#d1fae5;">☁️</div>
+          <div>
+            <div class="sp-title">スプレッドシートに保存</div>
+            <div class="sp-sub">最新データをクラウドに記録</div>
+          </div>
+        </div>
+        <div class="sp-chips" id="sp-save-chips">
+          <span class="sp-chip"><strong>日付</strong> —</span>
+          <span class="sp-chip"><strong>START</strong> —</span>
+          <span class="sp-chip"><strong>MASTER</strong> —</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button class="sp-btn sp-btn-green" onclick="spSaveToSheet()">💾 今すぐ保存</button>
+          <a href="https://docs.google.com/spreadsheets/d/19gEE5nbknO1wqXNVkXXbKW5400zxdB8kpdad06_WI1M/edit" target="_blank" style="font-size:11px;color:#1a7fd4;text-decoration:none;">シートを開く ↗</a>
+        </div>
+        <div class="sp-status" id="sp-save-status"></div>
+      </div>
+      <div class="sp-col">
+        <div class="sp-head">
+          <div class="sp-icon" style="background:#dbeafe;">📂</div>
+          <div>
+            <div class="sp-title">過去メニューを読み込む</div>
+            <div class="sp-sub">スプレッドシートから復元</div>
+          </div>
+        </div>
+        <div class="sp-date-list" id="sp-date-list">
+          <div style="padding:18px;text-align:center;font-size:11px;color:#aaa;">読み込み中...</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="sp-btn sp-btn-blue" onclick="spLoadFromSheet()">📥 読み込む</button>
+          <button class="sp-btn sp-btn-gray" onclick="spFetchDates()">↻ 更新</button>
+        </div>
+        <div class="sp-status" id="sp-load-status"></div>
+      </div>
+      <div class="sp-col">
+        <div class="sp-head">
+          <div class="sp-icon" style="background:#fef3c7;">🖥️</div>
+          <div>
+            <div class="sp-title">このデバイスに保存</div>
+            <div class="sp-sub">オフライン対応ブラウザ保存</div>
+          </div>
+        </div>
+        <div class="sp-local-bar">
+          <div class="sp-local-dot" id="sp-local-dot" style="background:#aaa;"></div>
+          <span id="sp-local-text">未保存</span>
+        </div>
+        <div style="font-size:11px;color:#6b7a8d;margin-bottom:9px;line-height:1.6;">スプレッドシートとは独立して保存。<br>ブラウザを閉じても残ります。</div>
+        <button class="sp-btn sp-btn-gray" onclick="spLocalSave()">💾 今すぐ保存</button>
+        <div class="sp-status" id="sp-local-status"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="menu-panels">
+    <div class="m-panel">
+      <div class="m-gbar">
+        <div class="m-gbar-left">
+          <div class="m-gbar-name-row">
+            <div class="m-gname" id="m-name" contenteditable="" spellcheck="false">MASTER</div>
+            <span id="mm-glabel-print" style="display: inline-block; font: 700 11px &quot;Noto Sans JP&quot;, sans-serif; color: rgb(255, 255, 255); background: rgb(69, 90, 100); border-radius: 4px; padding: 2px 8px; white-space: nowrap;">長水路・全員</span>
+          </div>
+        </div>
+        <div class="m-gright">
+          <div class="m-gright-row"><span class="m-gright-label">水路</span><select class="m-gsel" id="m-pool" onchange="updateGbarLabel(&#39;m&#39;)"><option>長水路</option><option>短水路</option><option>口論義</option></select><button class="m-addbtn no-print" onclick="openAddOv(&#39;pool&#39;,&#39;m-pool&#39;)">＋</button></div>
+          <div class="m-gright-row"><span class="m-gright-label">対象</span><select class="m-gsel" id="m-grp" onchange="updateGbarLabel(&#39;m&#39;)"><option>全員</option><option>突破者</option><option>未突破者</option><option>社会人</option><option>平泳ぎ</option><option>背泳ぎ</option><option>バタフライ</option><option>自由形</option><option>個人メドレー</option><option>Distance</option><option>MD</option><option>Mid</option><option>Short</option><option>Sprint</option><option>50m100m</option><option>100m200m</option></select><button class="m-addbtn no-print" onclick="openAddOv(&#39;grp&#39;,&#39;m-grp&#39;)">＋</button></div>
+        </div>
+      </div>
+      <div class="m-sum-bar has-data" id="m-sum-row"><span class="m-sum-seg"><span class="m-sum-lbl">Total</span><span class="m-sum-val">1,150</span><span class="m-sum-unit">m</span></span><span class="m-sum-seg"><span class="m-sum-lbl">終了</span><span class="m-sum-val blue">13:22</span></span></div>
+      <div class="m-print-race-bar" id="print-race-bar-m"><span class="m-print-race-tag">🏅 梅村杯長水路　5/16（残り7日）</span><span class="m-print-race-tag">🏅 日本選手権　6/4（残り26日）</span><span class="m-print-race-tag">🏅 インカレ　9/3（残り117日）</span></div>
+      <div class="m-pbody"><div class="m-lc" id="m-lc"><div class="m-lcrow m-lc-t" style="height:120px;min-height:40px;">11:00</div><div class="m-lcrow m-lc-d" style="height:480px;min-height:40px;">800m</div><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">12:00</div><div class="m-lcrow m-lc-d" style="height:520px;min-height:40px;">250m</div><div class="m-lcrow" style="height:560px;min-height:40px;"></div><div class="m-lcrow" style="height:440px;min-height:40px;"></div><div class="m-lcrow" style="height:120px;min-height:40px;"></div><div class="m-lcrow" style="height:40px;min-height:40px;"></div><div class="m-lcrow m-lc-d" style="height:1120px;min-height:40px;">100m</div><div class="m-lcrow" style="height:680px;min-height:40px;"></div><div class="m-lcrow" style="height:720px;min-height:40px;"></div></div><div class="m-tcol"><textarea id="m-ta" placeholder="W-up
+  100m*4(1&#39;30)  FR/BA/IM/RevIM
+  50m*8(1&#39;)  Kick/Swim
+DIVE
+  25m*3(2&#39;)
+KICK
+  [100m*3(2&#39;)+50m*2(1&#39;15)]*2set(1&#39;)"></textarea><div class="m-print-body" id="m-print"><div class="m-pl-rows"><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:00</div><div class="m-pl-text-cell m-pl-title">FP</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">800m</div><div class="m-pl-text-cell">  800m(60')</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">12:00</div><div class="m-pl-text-cell m-pl-title">DIVE</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">250m</div><div class="m-pl-text-cell">  50m*5(10')</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">  100mの前半より速く</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">  卓：28"5以内</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">  </div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">&nbsp;</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">100m</div><div class="m-pl-text-cell">200m=100m*2(15')+50m*2(15')</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">  100=200m前半より速く</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">  50m=100mの前半より速く</div></div></div></div></div></div>
+    </div>
+    <div class="m-panel-spacer"></div>
+    <div class="m-panel">
+      <div class="m-gbar">
+        <div class="m-gbar-left">
+          <div class="m-gbar-name-row">
+            <div class="m-gname" id="a-name" contenteditable="" spellcheck="false">ADJUST</div>
+            <span id="ma-glabel-print" style="display: inline-block; font: 700 11px &quot;Noto Sans JP&quot;, sans-serif; color: rgb(255, 255, 255); background: rgb(69, 90, 100); border-radius: 4px; padding: 2px 8px; white-space: nowrap;">長水路・全員</span>
+          </div>
+        </div>
+        <div class="m-gright">
+          <div class="m-gright-row"><span class="m-gright-label">水路</span><select class="m-gsel" id="a-pool" onchange="updateGbarLabel(&#39;a&#39;)"><option>長水路</option><option>短水路</option><option>口論義</option></select><button class="m-addbtn no-print" onclick="openAddOv(&#39;pool&#39;,&#39;a-pool&#39;)">＋</button></div>
+          <div class="m-gright-row"><span class="m-gright-label">対象</span><select class="m-gsel" id="a-grp" onchange="updateGbarLabel(&#39;a&#39;)"><option>全員</option><option>突破者</option><option>未突破者</option><option>社会人</option><option>平泳ぎ</option><option>背泳ぎ</option><option>バタフライ</option><option>自由形</option><option>個人メドレー</option><option>Distance</option><option>MD</option><option>Mid</option><option>Short</option><option>Sprint</option><option>50m100m</option><option>100m200m</option></select><button class="m-addbtn no-print" onclick="openAddOv(&#39;grp&#39;,&#39;a-grp&#39;)">＋</button></div>
+        </div>
+      </div>
+      <div class="m-sum-bar" id="a-sum-row"></div>
+      <div class="m-print-race-bar" id="print-race-bar-a"><span class="m-print-race-tag">🏅 梅村杯長水路　5/16（残り7日）</span><span class="m-print-race-tag">🏅 日本選手権　6/4（残り26日）</span><span class="m-print-race-tag">🏅 インカレ　9/3（残り117日）</span></div>
+      <div class="m-pbody"><div class="m-lc" id="a-lc"></div><div class="m-tcol"><textarea id="a-ta" placeholder="← MASTERと同期、または独自に編集可"></textarea><div class="m-print-body" id="a-print"></div></div></div>
+    </div>
+    <div class="m-panel-spacer"></div>
+    <div class="m-panel">
+      <div class="m-gbar">
+        <div class="m-gbar-left">
+          <div class="m-gbar-name-row">
+            <div class="m-gname" id="b-name" contenteditable="" spellcheck="false">ADJUST2</div>
+            <span id="mb-glabel-print" style="display: inline-block; font: 700 11px &quot;Noto Sans JP&quot;, sans-serif; color: rgb(255, 255, 255); background: rgb(69, 90, 100); border-radius: 4px; padding: 2px 8px; white-space: nowrap;">長水路・全員</span>
+          </div>
+        </div>
+        <div class="m-gright">
+          <div class="m-gright-row"><span class="m-gright-label">水路</span><select class="m-gsel" id="b-pool" onchange="updateGbarLabel(&#39;b&#39;)"><option>長水路</option><option>短水路</option><option>口論義</option></select><button class="m-addbtn no-print" onclick="openAddOv(&#39;pool&#39;,&#39;b-pool&#39;)">＋</button></div>
+          <div class="m-gright-row"><span class="m-gright-label">対象</span><select class="m-gsel" id="b-grp" onchange="updateGbarLabel(&#39;b&#39;)"><option>全員</option><option>突破者</option><option>未突破者</option><option>社会人</option><option>平泳ぎ</option><option>背泳ぎ</option><option>バタフライ</option><option>自由形</option><option>個人メドレー</option><option>Distance</option><option>MD</option><option>Mid</option><option>Short</option><option>Sprint</option><option>50m100m</option><option>100m200m</option></select><button class="m-addbtn no-print" onclick="openAddOv(&#39;grp&#39;,&#39;b-grp&#39;)">＋</button></div>
+        </div>
+      </div>
+      <div class="m-sum-bar" id="b-sum-row"></div>
+      <div class="m-print-race-bar" id="print-race-bar-b"><span class="m-print-race-tag">🏅 梅村杯長水路　5/16（残り7日）</span><span class="m-print-race-tag">🏅 日本選手権　6/4（残り26日）</span><span class="m-print-race-tag">🏅 インカレ　9/3（残り117日）</span></div>
+      <div class="m-pbody"><div class="m-lc" id="b-lc"></div><div class="m-tcol"><textarea id="b-ta" placeholder="← MASTERと同期、または独自に編集可"></textarea><div class="m-print-body" id="b-print"></div></div></div>
+    </div>
+  </div>
+  <div id="menu-print-container" style="display:none"><div id="menu-print-inner"></div></div>
+</div>
+
+<!-- ============================================================
+     APP2: メニュー作成2
+     ============================================================ -->
+<div id="app-menu2" class="app-section">
+  <div id="menu2-topbar" style="flex-shrink:0;display:flex;flex-direction:column;background:#fff;border-bottom:2px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.07);z-index:10;">
+    <div style="height:52px;display:flex;align-items:center;gap:10px;padding:0 16px;">
+      <span style="font-size:18px">📅</span>
+      <span id="m2-date-disp" style="border:1.5px solid var(--border);border-radius:20px;padding:4px 14px;font:700 14px &#39;Noto Sans JP&#39;,sans-serif;color:var(--text);background:#fff;cursor:pointer" onclick="showApp(&#39;app-menu&#39;)" title="メニュー作成1で日付変更">2026-05-09</span>
+      <span class="m-tlabel">🏁 START:</span>
+      <span id="m2-time-disp" style="border:1.5px solid var(--border);border-radius:20px;padding:4px 14px;font:700 14px &#39;Noto Sans JP&#39;,sans-serif;color:var(--text);background:#fff;">11:00</span>
+      <span class="m-wchip" id="wchip2">Week 6</span>
+      <div class="m-spacer"></div>
+      <button class="m-tbtn no-print" style="background:#9c27b0;color:#fff" onclick="openPdfOv()">📄 PDF読込</button>
+      <button class="m-tbtn m-tbtn-green no-print" onclick="openPrintOv2()">🖨️ 印刷</button>
+      <button class="btn-save-main no-print" onclick="showApp(&#39;app-menu&#39;);setTimeout(()=&gt;toggleSavePanel(true),50);">💾 保存・読み込み</button>
+    </div>
+    <div id="menu2-topbar-row2" style="display:none;flex-direction:row;align-items:center;gap:6px;padding:4px 16px;flex-wrap:wrap;background:linear-gradient(to right,#fff8f0,#fff3e8);border-top:1px solid #ffe0b2;" class="visible">
+      <span style="font-size:11px;color:#e65100;font-weight:700;white-space:nowrap;flex-shrink:0">🏅 試合:</span>
+      <div class="m-rpills" id="rpills2"><span class="m-rpill" style="border-color:#c62828;color:#c62828">🏅 梅村杯長水路　5/16（残り7日）</span><span class="m-rpill" style="border-color:#e65100;color:#e65100">🏅 日本選手権　6/4（残り26日）</span><span class="m-rpill" style="border-color:#1565c0;color:#1565c0">🏅 インカレ　9/3（残り117日）</span></div>
+    </div>
+  </div>
+  <div id="menu2-panels">
+    <div class="m-panel">
+      <div class="m-gbar">
+        <div class="m-gbar-left">
+          <div class="m-gbar-name-row">
+            <div class="m-gname" id="c-name" contenteditable="" spellcheck="false">ADJUST3</div>
+            <span id="mc-glabel-print" style="display: inline-block; font: 700 11px &quot;Noto Sans JP&quot;, sans-serif; color: rgb(255, 255, 255); background: rgb(69, 90, 100); border-radius: 4px; padding: 2px 8px; white-space: nowrap;">長水路・全員</span>
+          </div>
+        </div>
+        <div class="m-gright">
+          <div class="m-gright-row"><span class="m-gright-label">水路</span><select class="m-gsel" id="c-pool" onchange="updateGbarLabel2(&#39;c&#39;)"><option>長水路</option><option>短水路</option><option>口論義</option></select><button class="m-addbtn no-print" onclick="openAddOv(&#39;pool&#39;,&#39;c-pool&#39;)">＋</button></div>
+          <div class="m-gright-row"><span class="m-gright-label">対象</span><select class="m-gsel" id="c-grp" onchange="updateGbarLabel2(&#39;c&#39;)"><option>全員</option><option>突破者</option><option>未突破者</option><option>社会人</option><option>平泳ぎ</option><option>背泳ぎ</option><option>バタフライ</option><option>自由形</option><option>個人メドレー</option><option>Distance</option><option>MD</option><option>Mid</option><option>Short</option><option>Sprint</option><option>50m100m</option><option>100m200m</option></select><button class="m-addbtn no-print" onclick="openAddOv(&#39;grp&#39;,&#39;c-grp&#39;)">＋</button></div>
+        </div>
+      </div>
+      <div class="m-sum-bar has-data" id="c-sum-row"><span class="m-sum-seg"><span class="m-sum-lbl">Total</span><span class="m-sum-val">3,900</span><span class="m-sum-unit">m</span></span><span class="m-sum-seg"><span class="m-sum-lbl">終了</span><span class="m-sum-val blue">12:22</span></span></div>
+      <div class="m-print-race-bar" id="print-race-bar-c"></div>
+      <div class="m-pbody"><div class="m-lc" id="c-lc"><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:00</div><div class="m-lcrow m-lc-d" style="height:880px;min-height:40px;">400m</div><div class="m-lcrow m-lc-d" style="height:840px;min-height:40px;">400m</div><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:15</div><div class="m-lcrow" style="height:1000px;min-height:40px;"></div><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:15</div><div class="m-lcrow m-lc-d" style="height:920px;min-height:40px;">800m</div><div class="m-lcrow m-lc-t" style="height:1200px;min-height:40px;">11:28</div><div class="m-lcrow" style="height:120px;min-height:40px;"></div><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:29</div><div class="m-lcrow m-lc-d" style="height:1480px;min-height:40px;">1200m</div><div class="m-lcrow" style="height:1080px;min-height:40px;"></div><div class="m-lcrow m-lc-t" style="height:120px;min-height:40px;">11:46</div><div class="m-lcrow m-lc-d" style="height:280px;min-height:40px;">100m</div><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:46</div><div class="m-lcrow m-lc-d" style="height:2520px;min-height:40px;">1000m</div><div class="m-lcrow" style="height:40px;min-height:40px;"></div></div><div class="m-tcol"><textarea id="c-ta" placeholder="ADJUST3
+W-up
+  100m*4(1&#39;30)"></textarea><div class="m-print-body" id="c-print"><div class="m-pl-rows"><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:00</div><div class="m-pl-text-cell m-pl-title">W-up</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">400m</div><div class="m-pl-text-cell">  400m(7') SKPSby100m</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">400m</div><div class="m-pl-text-cell">  50m*8(1') IMO by2t</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:15</div><div class="m-pl-text-cell m-pl-title">DIVE</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">  25m*4(2')IMOby1t  G4  </div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:15</div><div class="m-pl-text-cell m-pl-title">KICK</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">800m</div><div class="m-pl-text-cell">  200m*4(3'15)  InTime</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:28</div><div class="m-pl-text-cell m-pl-title">S(2'50) A(3') B(3'15) C(3'20)</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">  </div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:29</div><div class="m-pl-text-cell m-pl-title">PULL</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">1200m</div><div class="m-pl-text-cell">400m(5'00)+200m*2(2'40)+100m*4(1'30)</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">  NoPaddle  400m&lt;200m&lt;100m</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:46</div><div class="m-pl-text-cell m-pl-title">EZ</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">100m</div><div class="m-pl-text-cell">  100m</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:46</div><div class="m-pl-text-cell m-pl-title">SWIM</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">1000m</div><div class="m-pl-text-cell">[25m(1')+50m*4(1')+25m(3')]*4set 25m(1)DIVE,50m=EZ/Fast,25m(2)</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">&nbsp;</div></div></div></div></div></div>
+    </div>
+    <div class="m-panel-spacer"></div>
+    <div class="m-panel">
+      <div class="m-gbar">
+        <div class="m-gbar-left">
+          <div class="m-gbar-name-row">
+            <div class="m-gname" id="d-name" contenteditable="" spellcheck="false">ADJUST4</div>
+            <span id="md-glabel-print" style="display: inline-block; font: 700 11px &quot;Noto Sans JP&quot;, sans-serif; color: rgb(255, 255, 255); background: rgb(69, 90, 100); border-radius: 4px; padding: 2px 8px; white-space: nowrap;">長水路・全員</span>
+          </div>
+        </div>
+        <div class="m-gright">
+          <div class="m-gright-row"><span class="m-gright-label">水路</span><select class="m-gsel" id="d-pool" onchange="updateGbarLabel2(&#39;d&#39;)"><option>長水路</option><option>短水路</option><option>口論義</option></select><button class="m-addbtn no-print" onclick="openAddOv(&#39;pool&#39;,&#39;d-pool&#39;)">＋</button></div>
+          <div class="m-gright-row"><span class="m-gright-label">対象</span><select class="m-gsel" id="d-grp" onchange="updateGbarLabel2(&#39;d&#39;)"><option>全員</option><option>突破者</option><option>未突破者</option><option>社会人</option><option>平泳ぎ</option><option>背泳ぎ</option><option>バタフライ</option><option>自由形</option><option>個人メドレー</option><option>Distance</option><option>MD</option><option>Mid</option><option>Short</option><option>Sprint</option><option>50m100m</option><option>100m200m</option></select><button class="m-addbtn no-print" onclick="openAddOv(&#39;grp&#39;,&#39;d-grp&#39;)">＋</button></div>
+        </div>
+      </div>
+      <div class="m-sum-bar has-data" id="d-sum-row"><span class="m-sum-seg"><span class="m-sum-lbl">Total</span><span class="m-sum-val">3,900</span><span class="m-sum-unit">m</span></span><span class="m-sum-seg"><span class="m-sum-lbl">終了</span><span class="m-sum-val blue">12:22</span></span></div>
+      <div class="m-print-race-bar" id="print-race-bar-d"></div>
+      <div class="m-pbody"><div class="m-lc" id="d-lc"><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:00</div><div class="m-lcrow m-lc-d" style="height:880px;min-height:40px;">400m</div><div class="m-lcrow m-lc-d" style="height:840px;min-height:40px;">400m</div><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:15</div><div class="m-lcrow" style="height:1000px;min-height:40px;"></div><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:15</div><div class="m-lcrow m-lc-d" style="height:920px;min-height:40px;">800m</div><div class="m-lcrow m-lc-t" style="height:1200px;min-height:40px;">11:28</div><div class="m-lcrow" style="height:120px;min-height:40px;"></div><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:29</div><div class="m-lcrow m-lc-d" style="height:1480px;min-height:40px;">1200m</div><div class="m-lcrow" style="height:1080px;min-height:40px;"></div><div class="m-lcrow m-lc-t" style="height:120px;min-height:40px;">11:46</div><div class="m-lcrow m-lc-d" style="height:280px;min-height:40px;">100m</div><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:46</div><div class="m-lcrow m-lc-d" style="height:2520px;min-height:40px;">1000m</div><div class="m-lcrow" style="height:40px;min-height:40px;"></div></div><div class="m-tcol"><textarea id="d-ta" placeholder="← ADJUST3と同期、または独自に編集可"></textarea><div class="m-print-body" id="d-print"><div class="m-pl-rows"><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:00</div><div class="m-pl-text-cell m-pl-title">W-up</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">400m</div><div class="m-pl-text-cell">  400m(7') SKPSby100m</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">400m</div><div class="m-pl-text-cell">  50m*8(1') IMO by2t</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:15</div><div class="m-pl-text-cell m-pl-title">DIVE</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">  25m*4(2')IMOby1t  G4  </div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:15</div><div class="m-pl-text-cell m-pl-title">KICK</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">800m</div><div class="m-pl-text-cell">  200m*4(3'15)  InTime</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:28</div><div class="m-pl-text-cell m-pl-title">S(2'50) A(3') B(3'15) C(3'20)</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">  </div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:29</div><div class="m-pl-text-cell m-pl-title">PULL</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">1200m</div><div class="m-pl-text-cell">400m(5'00)+200m*2(2'40)+100m*4(1'30)</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">  NoPaddle  400m&lt;200m&lt;100m</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:46</div><div class="m-pl-text-cell m-pl-title">EZ</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">100m</div><div class="m-pl-text-cell">  100m</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:46</div><div class="m-pl-text-cell m-pl-title">SWIM</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">1000m</div><div class="m-pl-text-cell">[25m(1')+50m*4(1')+25m(3')]*4set 25m(1)DIVE,50m=EZ/Fast,25m(2)</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">&nbsp;</div></div></div></div></div></div>
+    </div>
+    <div class="m-panel-spacer"></div>
+    <div class="m-panel">
+      <div class="m-gbar">
+        <div class="m-gbar-left">
+          <div class="m-gbar-name-row">
+            <div class="m-gname" id="e-name" contenteditable="" spellcheck="false">ADJUST5</div>
+            <span id="me-glabel-print" style="display: inline-block; font: 700 11px &quot;Noto Sans JP&quot;, sans-serif; color: rgb(255, 255, 255); background: rgb(69, 90, 100); border-radius: 4px; padding: 2px 8px; white-space: nowrap;">長水路・全員</span>
+          </div>
+        </div>
+        <div class="m-gright">
+          <div class="m-gright-row"><span class="m-gright-label">水路</span><select class="m-gsel" id="e-pool" onchange="updateGbarLabel2(&#39;e&#39;)"><option>長水路</option><option>短水路</option><option>口論義</option></select><button class="m-addbtn no-print" onclick="openAddOv(&#39;pool&#39;,&#39;e-pool&#39;)">＋</button></div>
+          <div class="m-gright-row"><span class="m-gright-label">対象</span><select class="m-gsel" id="e-grp" onchange="updateGbarLabel2(&#39;e&#39;)"><option>全員</option><option>突破者</option><option>未突破者</option><option>社会人</option><option>平泳ぎ</option><option>背泳ぎ</option><option>バタフライ</option><option>自由形</option><option>個人メドレー</option><option>Distance</option><option>MD</option><option>Mid</option><option>Short</option><option>Sprint</option><option>50m100m</option><option>100m200m</option></select><button class="m-addbtn no-print" onclick="openAddOv(&#39;grp&#39;,&#39;e-grp&#39;)">＋</button></div>
+        </div>
+      </div>
+      <div class="m-sum-bar has-data" id="e-sum-row"><span class="m-sum-seg"><span class="m-sum-lbl">Total</span><span class="m-sum-val">3,300</span><span class="m-sum-unit">m</span></span><span class="m-sum-seg"><span class="m-sum-lbl">終了</span><span class="m-sum-val blue">12:25</span></span></div>
+      <div class="m-print-race-bar" id="print-race-bar-e"></div>
+      <div class="m-pbody"><div class="m-lc" id="e-lc"><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:00</div><div class="m-lcrow m-lc-d" style="height:880px;min-height:40px;">400m</div><div class="m-lcrow m-lc-d" style="height:840px;min-height:40px;">400m</div><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:15</div><div class="m-lcrow" style="height:1000px;min-height:40px;"></div><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:15</div><div class="m-lcrow m-lc-d" style="height:880px;min-height:40px;">200m</div><div class="m-lcrow m-lc-d" style="height:960px;min-height:40px;">200m</div><div class="m-lcrow m-lc-d" style="height:1720px;min-height:40px;">200m</div><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:33</div><div class="m-lcrow m-lc-d" style="height:3040px;min-height:40px;">800m</div><div class="m-lcrow m-lc-t" style="height:120px;min-height:40px;">11:49</div><div class="m-lcrow m-lc-d" style="height:280px;min-height:40px;">100m</div><div class="m-lcrow m-lc-t" style="height:200px;min-height:40px;">11:49</div><div class="m-lcrow m-lc-d" style="height:2480px;min-height:40px;">1000m</div><div class="m-lcrow" style="height:40px;min-height:40px;"></div></div><div class="m-tcol"><textarea id="e-ta" placeholder="← ADJUST3と同期、または独自に編集可"></textarea><div class="m-print-body" id="e-print"><div class="m-pl-rows"><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:00</div><div class="m-pl-text-cell m-pl-title">W-up</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">400m</div><div class="m-pl-text-cell">  400m(7') SKPSby100m</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">400m</div><div class="m-pl-text-cell">  50m*8(1') IMO by2t</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:15</div><div class="m-pl-text-cell m-pl-title">DIVE</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">  25m*4(2')IMOby1t  G4  </div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:15</div><div class="m-pl-text-cell m-pl-title">KICK</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">200m</div><div class="m-pl-text-cell">  50m*4(1'30) DragSox</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">200m</div><div class="m-pl-text-cell">  50m*4(1'30) Parachute</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">200m</div><div class="m-pl-text-cell">  50m*4(1'30) Normal   25mFast/Last15mFast</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:33</div><div class="m-pl-text-cell m-pl-title">PULL</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">800m</div><div class="m-pl-text-cell">50m*16(1')  1)26mNoBreath 2)35mNoBreath 3)50mNoBreath 4)Smooth(Breathing)*4</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:49</div><div class="m-pl-text-cell m-pl-title">EZ</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">100m</div><div class="m-pl-text-cell">  100m</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-t">11:49</div><div class="m-pl-text-cell m-pl-title">SWIM</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell m-pl-lc-d">1000m</div><div class="m-pl-text-cell">[25m(1')+50m*4(1')+25m(3')]*4set 25m(1)DIVE,50m=Smooth,25m(2)</div></div><div class="m-pl-row-wrap"><div class="m-pl-lc-cell"></div><div class="m-pl-text-cell">&nbsp;</div></div></div></div></div></div>
+    </div>
+  </div>
+  <div id="menu2-print-container" style="display:none"><div id="menu2-print-inner"></div></div>
+</div>
+
+<!-- ============================================================
+     モーダル類
+     ============================================================ -->
+
+<!-- ADD MODAL -->
+<div class="m-ov" id="add-ov"><div class="m-modal" style="max-width:380px">
+  <h3 id="add-title">選択肢を追加</h3>
+  <p id="add-subtitle"></p>
+  <div class="m-addinrow"><input type="text" id="add-inp" placeholder="新しい選択肢を入力"><button class="m-mbtn-ok" onclick="doAdd()">追加</button></div>
+  <div style="font-size:11px;color:#888;margin:6px 0 8px">登録済み（×で削除）：</div>
+  <div class="m-chips" id="add-chips"></div>
+  <div class="m-mact"><button class="m-mbtn-cancel" onclick="closeAddOv()">閉じる</button></div>
+</div></div>
+
+<!-- RACE MODAL -->
+<div class="m-ov" id="race-ov"><div class="m-modal" style="max-width:500px">
+  <h3>🏅 試合データ 更新・取得</h3>
+  <div style="background:#e3f0ff;border:1.5px solid #1565c0;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12.5px;color:#1c2333">
+    <div style="font-weight:700;font-size:13px;color:#1565c0;margin-bottom:6px">📋 データ更新方法</div>
+    <ol style="line-height:1.6;padding-left:18px;margin:0;color:#37474f">
+      <li>Googleスプレッドシートを開いて試合名・日付を編集</li>
+      <li>「ファイル」→「ダウンロード」→「カンマ区切り形式（.csv）」で保存</li>
+      <li>下の「📂 CSVファイルを選択」で保存したファイルを選ぶ</li>
+    </ol>
+  </div>
+  <label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:2px dashed #1a7fd4;border-radius:10px;padding:18px 14px;margin-bottom:10px;cursor:pointer;background:#f5f9ff" onmouseover="this.style.background=&#39;#e3f0ff&#39;" onmouseout="this.style.background=&#39;#f5f9ff&#39;">
+    <span style="font-size:28px">📂</span>
+    <span style="font-weight:700;font-size:13px;color:#1565c0">CSVファイルを選択</span>
+    <input id="csv-file-input" type="file" accept=".csv" style="display:none" onchange="loadCsvFile(this)">
+  </label>
+  <div style="margin-bottom:8px"><span id="m-rstatus" style="font-size:12px"></span></div>
+  <div class="m-rpreview" id="rpreview"><span style="color:#aaa">未取得</span></div>
+  <div class="m-mact" style="justify-content:space-between">
+    <button class="m-mbtn-cancel" style="background:#ffeaea;color:#c62828;border:1px solid #f5c6c6" onclick="clearRaceData()">🗑️ データ削除</button>
+    <button class="m-mbtn-cancel" onclick="closeRaceOv()">閉じる</button>
+  </div>
+</div></div>
+
+<!-- PDF MODAL -->
+<div class="m-ov pdf-modal" id="pdf-ov">
+  <div class="pdf-modal-inner">
+    <div style="background:#f8f9fb;border-bottom:2px solid #9c27b0;padding:0 20px;display:flex;align-items:center;height:50px;flex-shrink:0">
+      <div style="font:700 16px &#39;Oswald&#39;,sans-serif;color:#9c27b0;letter-spacing:1px">📄 PDF読み込み</div>
+      <div style="flex:1"></div>
+      <button onclick="closePdfOv()" style="background:#f3e5f5;border:1.5px solid #9c27b0;color:#9c27b0;border-radius:8px;padding:5px 14px;font:700 12px inherit;cursor:pointer">✕ 閉じる</button>
+    </div>
+    <div style="padding:14px 20px;border-bottom:1px solid #eee;flex-shrink:0">
+      <label style="display:flex;align-items:center;gap:10px;border:2px dashed #9c27b0;border-radius:10px;padding:12px 16px;cursor:pointer;background:#f9f0ff" onmouseover="this.style.background=&#39;#f3e5f5&#39;" onmouseout="this.style.background=&#39;#f9f0ff&#39;">
+        <span style="font-size:24px">📄</span>
+        <div>
+          <div style="font:700 13px inherit;color:#6a1b9a" id="pdf-filename">クリックしてPDFを選択</div>
+          <div style="font-size:11px;color:#aaa;margin-top:2px">読み取り後、各列をどのパネルに入れるか選択できます（全6パネル対応）</div>
+        </div>
+        <input type="file" id="pdf-file" accept=".pdf" style="display:none" onchange="onPdfSelected(this)">
+      </label>
+      <div id="pdf-status" style="font-size:12px;min-height:18px;margin-top:8px;font-weight:700"></div>
+    </div>
+    <div id="pdf-assign-area" style="display:none;flex:1;overflow:hidden;flex-direction:column">
+      <div style="padding:8px 20px 4px;font:700 11px &#39;Noto Sans JP&#39;,sans-serif;color:#555;flex-shrink:0">▼ 各列の内容を確認して、入れるパネルを選んでください</div>
+      <div style="flex:1;overflow-y:auto;padding:0 20px 8px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="border:1.5px solid #dde3ea;border-radius:10px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="background:#e3f0ff;padding:6px 10px;display:flex;align-items:center;gap:6px;flex-shrink:0">
+            <span id="pdf-col1-label" style="font:700 11px &#39;Oswald&#39;,sans-serif;color:#1565c0;flex:1">左列</span>
+            <select id="pdf-col1-dest" style="border:1.5px solid #1565c0;border-radius:6px;padding:2px 4px;font:700 10px inherit;background:#fff;color:#1565c0;cursor:pointer">
+              <option value="m">→ MASTER</option><option value="a">→ ADJUST</option><option value="b">→ ADJUST2</option>
+              <option value="c">→ ADJUST3</option><option value="d">→ ADJUST4</option><option value="e">→ ADJUST5</option>
+              <option value="">使わない</option>
+            </select>
+          </div>
+          <textarea id="pdf-col1-text" style="flex:1;border:none;outline:none;resize:none;padding:8px 10px;font:12px/1.6 &#39;Meiryo&#39;,sans-serif;color:#333;min-height:160px"></textarea>
+        </div>
+        <div style="border:1.5px solid #dde3ea;border-radius:10px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="background:#eafaf1;padding:6px 10px;display:flex;align-items:center;gap:6px;flex-shrink:0">
+            <span id="pdf-col2-label" style="font:700 11px &#39;Oswald&#39;,sans-serif;color:#1b5e20;flex:1">中列</span>
+            <select id="pdf-col2-dest" style="border:1.5px solid #388e3c;border-radius:6px;padding:2px 4px;font:700 10px inherit;background:#fff;color:#388e3c;cursor:pointer">
+              <option value="m">→ MASTER</option><option value="a" selected="">→ ADJUST</option><option value="b">→ ADJUST2</option>
+              <option value="c">→ ADJUST3</option><option value="d">→ ADJUST4</option><option value="e">→ ADJUST5</option>
+              <option value="">使わない</option>
+            </select>
+          </div>
+          <textarea id="pdf-col2-text" style="flex:1;border:none;outline:none;resize:none;padding:8px 10px;font:12px/1.6 &#39;Meiryo&#39;,sans-serif;color:#333;min-height:160px"></textarea>
+        </div>
+        <div style="border:1.5px solid #dde3ea;border-radius:10px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="background:#f3e5f5;padding:6px 10px;display:flex;align-items:center;gap:6px;flex-shrink:0">
+            <span id="pdf-col3-label" style="font:700 11px &#39;Oswald&#39;,sans-serif;color:#6a1b9a;flex:1">右列</span>
+            <select id="pdf-col3-dest" style="border:1.5px solid #8e24aa;border-radius:6px;padding:2px 4px;font:700 10px inherit;background:#fff;color:#8e24aa;cursor:pointer">
+              <option value="m">→ MASTER</option><option value="a">→ ADJUST</option><option value="b" selected="">→ ADJUST2</option>
+              <option value="c">→ ADJUST3</option><option value="d">→ ADJUST4</option><option value="e">→ ADJUST5</option>
+              <option value="">使わない</option>
+            </select>
+          </div>
+          <textarea id="pdf-col3-text" style="flex:1;border:none;outline:none;resize:none;padding:8px 10px;font:12px/1.6 &#39;Meiryo&#39;,sans-serif;color:#333;min-height:160px"></textarea>
+        </div>
+      </div>
+      <div style="padding:8px 20px;border-top:1px solid #eee;display:flex;gap:8px;justify-content:flex-end;flex-shrink:0">
+        <button onclick="closePdfOv()" style="padding:7px 16px;background:#eee;color:#333;border:none;border-radius:8px;font:700 12px inherit;cursor:pointer">キャンセル</button>
+        <button onclick="applyPdfCols()" style="padding:7px 20px;background:#9c27b0;color:#fff;border:none;border-radius:8px;font:700 13px inherit;cursor:pointer">✅ 選択した内容を適用</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 印刷1 MODAL -->
+<div class="m-ov" id="print-ov"><div class="m-modal" style="max-width:420px">
+  <h3 style="margin-bottom:16px">🖨️ 印刷方法を選択</h3>
+  <button onclick="execPrint(&#39;3up&#39;)" style="width:100%;padding:14px;margin-bottom:10px;background:#388e3c;color:#fff;border:none;border-radius:10px;font:700 14px inherit;cursor:pointer;display:flex;align-items:center;gap:10px">
+    <span style="font-size:22px">🖨️</span>
+    <div style="text-align:left"><div>３画面印刷</div><div style="font-size:11px;font-weight:400;opacity:.85">Master・Adjust・Adjust2 を横3列で印刷</div></div>
+  </button>
+  <div style="border:1.5px solid #dde3ea;border-radius:10px;padding:14px;margin-bottom:10px">
+    <div style="font:700 13px inherit;margin-bottom:10px;color:#333">📋 選択印刷</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:#f0f6ff;border:1.5px solid #1a7fd4;border-radius:20px;padding:5px 12px;font-size:13px;user-select:none"><input type="checkbox" id="psel-m" style="accent-color:#1a7fd4"> Master</label>
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:#f0f6ff;border:1.5px solid #1a7fd4;border-radius:20px;padding:5px 12px;font-size:13px;user-select:none"><input type="checkbox" id="psel-a" style="accent-color:#1a7fd4"> Adjust</label>
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:#f0f6ff;border:1.5px solid #1a7fd4;border-radius:20px;padding:5px 12px;font-size:13px;user-select:none"><input type="checkbox" id="psel-b" style="accent-color:#1a7fd4"> Adjust2</label>
+    </div>
+    <button onclick="execPrint(&#39;select&#39;)" style="width:100%;padding:10px;background:#1a7fd4;color:#fff;border:none;border-radius:8px;font:700 13px inherit;cursor:pointer">✅ この内容で印刷</button>
+  </div>
+  <button onclick="closePrintOv()" style="width:100%;padding:10px;background:#eee;color:#333;border:none;border-radius:8px;font:700 13px inherit;cursor:pointer">キャンセル</button>
+</div></div>
+
+<!-- 印刷2 MODAL -->
+<div class="m-ov" id="print2-ov"><div class="m-modal" style="max-width:420px">
+  <h3 style="margin-bottom:16px">🖨️ 印刷方法を選択（メニュー2）</h3>
+  <button onclick="execPrint2(&#39;3up&#39;)" style="width:100%;padding:14px;margin-bottom:10px;background:#e65100;color:#fff;border:none;border-radius:10px;font:700 14px inherit;cursor:pointer;display:flex;align-items:center;gap:10px">
+    <span style="font-size:22px">🖨️</span>
+    <div style="text-align:left"><div>３画面印刷</div><div style="font-size:11px;font-weight:400;opacity:.85">Adjust3・Adjust4・Adjust5 を横3列で印刷</div></div>
+  </button>
+  <div style="border:1.5px solid #dde3ea;border-radius:10px;padding:14px;margin-bottom:10px">
+    <div style="font:700 13px inherit;margin-bottom:10px;color:#333">📋 選択印刷</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:#fff8f0;border:1.5px solid #e65100;border-radius:20px;padding:5px 12px;font-size:13px;user-select:none"><input type="checkbox" id="psel-c" style="accent-color:#e65100"> Adjust3</label>
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:#fff8f0;border:1.5px solid #e65100;border-radius:20px;padding:5px 12px;font-size:13px;user-select:none"><input type="checkbox" id="psel-d" style="accent-color:#e65100"> Adjust4</label>
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:#fff8f0;border:1.5px solid #e65100;border-radius:20px;padding:5px 12px;font-size:13px;user-select:none"><input type="checkbox" id="psel-e" style="accent-color:#e65100"> Adjust5</label>
+    </div>
+    <button onclick="execPrint2(&#39;select&#39;)" style="width:100%;padding:10px;background:#e65100;color:#fff;border:none;border-radius:8px;font:700 13px inherit;cursor:pointer">✅ この内容で印刷</button>
+  </div>
+  <button onclick="closePrintOv2()" style="width:100%;padding:10px;background:#eee;color:#333;border:none;border-radius:8px;font:700 13px inherit;cursor:pointer">キャンセル</button>
+</div></div>
+
+<script>
+// ============================================================
+// GAS URL
+// ============================================================
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbw-JlX-tKuHlGuy2rDAHaTIEIuPUUeDQqE84Hu0et-YNpBDZdmo1zDHcdCuPyvYY6Rntg/exec';
+
+// ============================================================
+// アプリ切替
+// ============================================================
+function showApp(appId) {
+  document.querySelectorAll('.app-section').forEach(s => s.classList.remove('visible'));
+  document.getElementById(appId).classList.add('visible');
+  document.getElementById('tab-m1').classList.toggle('active', appId === 'app-menu');
+  document.getElementById('tab-m2').classList.toggle('active', appId === 'app-menu2');
+  if (appId === 'app-menu2') updateMenu2Header();
+}
+
+// ============================================================
+// メニュー計算
+// ============================================================
+function norm(s){return s.replace(/（/g,'(').replace(/）/g,')').replace(/[✕×✖]/g,'*').replace(/ｍ/g,'m').replace(/[\u2018\u2019]/g,"'").replace(/[\u201c\u201d]/g,'"').replace(/′/g,"'");}
+function parseIv(s){if(!s)return null;s=s.trim();let m;m=s.match(/^(\d+)'(\d+)"?$/);if(m)return+m[1]*60+ +m[2];m=s.match(/^(\d+)'$/);if(m)return+m[1]*60;m=s.match(/^(\d+)"$/);if(m)return+m[1];m=s.match(/^(\d+):(\d+)$/);if(m)return+m[1]*60+ +m[2];m=s.match(/^(\d+)$/);if(m)return+m[1]*60;return null;}
+function parseTok(tok){tok=norm(tok).trim();const mr=/^(.+?\))\s+\S/.exec(tok)||/^(\d+(?:\.\d+)?\s*m(?:\s*[*x]\s*\d+)?)\s+/i.exec(tok);if(mr)tok=mr[1].trim();let m;m=tok.match(/^(\d+(?:\.\d+)?)\s*m\s*[*x]\s*(\d+)\s*\(([^)]+)\)$/i);if(m)return{d:+m[1],n:+m[2],iv:parseIv(m[3])};m=tok.match(/^(\d+(?:\.\d+)?)\s*m\s*\(([^)]+)\)$/i);if(m)return{d:+m[1],n:1,iv:parseIv(m[2])};m=tok.match(/^(\d+(?:\.\d+)?)\s*m\s*[*x]\s*(\d+)$/i);if(m)return{d:+m[1],n:+m[2],iv:null};m=tok.match(/^(\d+(?:\.\d+)?)\s*m$/i);if(m)return{d:+m[1],n:1,iv:null};return null;}
+function detectRep(line){line=norm(line).trim();let m;m=line.match(/^\[(.+)\]\s*[*x]\s*(\d+)\s*(?:sets?)?\s*(?:\(([^)]+)\))?(?:\s+\S.*)?$/i);if(m)return{inner:m[1],times:+m[2],rest:m[3]?parseIv(m[3]):60};m=line.match(/^\((.+)\)\s*[*x]\s*(\d+)\s*(?:sets?)?\s*(?:\(([^)]+)\))?(?:\s+\S.*)?$/i);if(m)return{inner:m[1],times:+m[2],rest:m[3]?parseIv(m[3]):60};return null;}
+function splitPlus(s){const r=[];let d=0,c='';for(const ch of s){if(ch==='('||ch==='[')d++;else if(ch===')'||ch===']')d--;else if(ch==='+'&&d===0){r.push(c.trim());c='';continue;}c+=ch;}if(c.trim())r.push(c.trim());return r;}
+function calcLine(line){line=norm(line.trim());const rep=detectRep(line);if(rep){let dist=0,sec=0;for(const tok of splitPlus(rep.inner)){const p=parseTok(tok);if(!p)continue;dist+=p.d*p.n;sec+=p.iv?p.iv*p.n:0;}return{dist:dist*rep.times,sec:sec*rep.times+rep.rest*(rep.times-1)};}let dist=0,sec=0;for(const tok of splitPlus(line)){const p=parseTok(tok);if(!p)continue;dist+=p.d*p.n;sec+=p.iv?p.iv*p.n:0;}return{dist,sec};}
+function t2s(t){const[h,m]=t.split(':').map(Number);return h*3600+m*60;}
+function s2hm(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;}
+function ceilMin(s){return Math.ceil(s/60)*60;}
+function isTitle(raw){if(/^\s/.test(raw))return false;const t=raw.trim();if(!t)return false;const{dist}=calcLine(raw);if(dist>0)return false;if(/^[a-z0-9\[\(\*\+\-_]/.test(t))return false;return true;}
+function calcMenu(text,startStr){
+  const base=t2s(startStr);const lines=text.split('\n');const cells=lines.map(()=>({kind:'blank',val:''}));
+  let elapsed=0,secSec=0,totalDist=0;
+  for(let i=0;i<lines.length;i++){const raw=lines[i];if(raw.trim()===''){if(secSec>0){elapsed+=secSec;secSec=0;}elapsed+=60;continue;}if(isTitle(raw)){elapsed+=secSec;secSec=0;cells[i]={kind:'time',val:s2hm(base+ceilMin(elapsed))};continue;}const{dist,sec}=calcLine(raw);if(dist>0){cells[i]={kind:'dist',val:dist+'m'};totalDist+=dist;}secSec+=sec;}
+  elapsed+=secSec;return{cells,totalDist,endTime:s2hm(base+ceilMin(elapsed))};
+}
+function renderPanel(taId,lcId,sumId){
+  const ta=document.getElementById(taId),lc=document.getElementById(lcId);
+  const startStr=document.getElementById('g-time').value||'10:00';
+  if(!ta.value.trim()){lc.innerHTML='';return;}
+  const{cells,totalDist,endTime}=calcMenu(ta.value,startStr);
+  const lines=ta.value.split('\n');
+  const taStyle=getComputedStyle(ta);
+  const taPadL=parseFloat(taStyle.paddingLeft)||14,taPadR=parseFloat(taStyle.paddingRight)||14;
+  const taWidth=ta.clientWidth-taPadL-taPadR;
+  const lhPx=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--lh'))||40;
+  const cvs=document.createElement('canvas'),ctx2=cvs.getContext('2d');ctx2.font=taStyle.font;
+  function countWraps(text){if(!text)return 1;const expanded=text.replace(/\t/g,'  ');let lineW=0,lines=1;for(const ch of expanded){const w=ctx2.measureText(ch).width;if(lineW+w>taWidth+0.5){lines++;lineW=w;}else{lineW+=w;}}return Math.max(1,lines);}
+  lc.innerHTML=cells.map((c,i)=>{const wraps=countWraps(lines[i]||'');const h=wraps*lhPx;const style=`height:${h}px;min-height:${lhPx}px;`;if(c.kind==='time')return`<div class="m-lcrow m-lc-t" style="${style}">${c.val}</div>`;if(c.kind==='dist')return`<div class="m-lcrow m-lc-d" style="${style}">${c.val}</div>`;return`<div class="m-lcrow" style="${style}"></div>`;}).join('');
+  lc.scrollTop=ta.scrollTop;
+  const sumRowId=taId.replace('-ta','-sum-row');
+  const sumRow=document.getElementById(sumRowId);
+  if(sumRow){
+    if(totalDist>0){
+      sumRow.classList.add('has-data');
+      sumRow.innerHTML=
+        `<span class="m-sum-seg"><span class="m-sum-lbl">Total</span><span class="m-sum-val">${totalDist.toLocaleString()}</span><span class="m-sum-unit">m</span></span>`+
+        `<span class="m-sum-seg"><span class="m-sum-lbl">終了</span><span class="m-sum-val blue">${endTime}</span></span>`;
+    }else{
+      sumRow.classList.remove('has-data');
+      sumRow.innerHTML='';
+    }
+  }
+  const printId=taId.replace('-ta','-print');
+  const pb=document.getElementById(printId);if(pb){const rowHtml=lines.map((line,i)=>{const c=cells[i];const esc=line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');const isT=c.kind==='time';const lcCls=c.kind==='time'?'m-pl-lc-cell m-pl-lc-t':c.kind==='dist'?'m-pl-lc-cell m-pl-lc-d':'m-pl-lc-cell';const textCls=isT?'m-pl-text-cell m-pl-title':'m-pl-text-cell';return`<div class="m-pl-row-wrap"><div class="${lcCls}">${c.val||''}</div><div class="${textCls}">${esc||'&nbsp;'}</div></div>`;}).join('');pb.innerHTML=`<div class="m-pl-rows">${rowHtml}</div>`;}
+}
+function renderBoth(){renderPanel('m-ta','m-lc','m-sum');renderPanel('a-ta','a-lc','a-sum');renderPanel('b-ta','b-lc','b-sum');}
+function renderMenu2(){renderPanel('c-ta','c-lc','c-sum');renderPanel('d-ta','d-lc','d-sum');renderPanel('e-ta','e-lc','e-sum');}
+
+// ============================================================
+// 入力リスナー（IME対応版）
+// ============================================================
+
+// ── メニュー1: m-ta が変更されたら a, b にコピー
+document.getElementById('m-ta').addEventListener('input',()=>{
+  const mVal=document.getElementById('m-ta').value;
+  ['a','b'].forEach(p=>{
+    const el=document.getElementById(p+'-ta');
+    if(!el._independent)el.value=mVal;
+  });
+  renderBoth();
+});
+['a','b'].forEach(p=>{
+  document.getElementById(p+'-ta').addEventListener('input',()=>{
+    const mVal=document.getElementById('m-ta').value;
+    const el=document.getElementById(p+'-ta');
+    el._independent=el.value!==mVal;
+    renderBoth();
+  });
+});
+document.getElementById('g-time').addEventListener('input',renderBoth);
+['m','a','b'].forEach(p=>{
+  const ta=document.getElementById(p+'-ta'),lc=document.getElementById(p+'-lc');
+  ta.addEventListener('scroll',()=>{lc.scrollTop=ta.scrollTop;});
+});
+
+/* ===== ★IME対応 Enter ハンドラ（メニュー1）===== */
+/* 日本語変換中のEnterは無視。確定後の通常Enterだけインデント挿入 */
+let _imeM = false;
+const _mTa = document.getElementById('m-ta');
+_mTa.addEventListener('compositionstart',()=>{ _imeM = true; });
+_mTa.addEventListener('compositionend',  ()=>{ _imeM = false; });
+_mTa.addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  // ★日本語変換中(=IME中)は何もしない
+  if(_imeM || e.isComposing || e.keyCode===229) return;
+  e.preventDefault();
+  const ta=e.target,pos=ta.selectionStart,val=ta.value;
+  const ls=val.lastIndexOf('\n',pos-1)+1;
+  const curLine=val.slice(ls,pos);
+  const indent=curLine.trim()===''?'':'  ';
+  ta.value=val.slice(0,pos)+'\n'+indent+val.slice(pos);
+  const np=pos+1+indent.length;
+  ta.setSelectionRange(np,np);
+  ['a','b'].forEach(p=>{
+    const el=document.getElementById(p+'-ta');
+    if(!el._independent)el.value=ta.value;
+  });
+  renderBoth();
+});
+
+// ── メニュー2: c-ta が変更されたら d, e にコピー
+document.getElementById('c-ta').addEventListener('input',()=>{
+  const cVal=document.getElementById('c-ta').value;
+  ['d','e'].forEach(p=>{
+    const el=document.getElementById(p+'-ta');
+    if(!el._independent)el.value=cVal;
+  });
+  renderMenu2();
+});
+['d','e'].forEach(p=>{
+  document.getElementById(p+'-ta').addEventListener('input',()=>{
+    const cVal=document.getElementById('c-ta').value;
+    const el=document.getElementById(p+'-ta');
+    el._independent=el.value!==cVal;
+    renderMenu2();
+  });
+});
+['c','d','e'].forEach(p=>{
+  const ta=document.getElementById(p+'-ta'),lc=document.getElementById(p+'-lc');
+  ta.addEventListener('scroll',()=>{lc.scrollTop=ta.scrollTop;});
+});
+
+/* ===== ★IME対応 Enter ハンドラ（メニュー2）===== */
+let _imeC = false;
+const _cTa = document.getElementById('c-ta');
+_cTa.addEventListener('compositionstart',()=>{ _imeC = true; });
+_cTa.addEventListener('compositionend',  ()=>{ _imeC = false; });
+_cTa.addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  if(_imeC || e.isComposing || e.keyCode===229) return;
+  e.preventDefault();
+  const ta=e.target,pos=ta.selectionStart,val=ta.value;
+  const ls=val.lastIndexOf('\n',pos-1)+1;
+  const curLine=val.slice(ls,pos);
+  const indent=curLine.trim()===''?'':'  ';
+  ta.value=val.slice(0,pos)+'\n'+indent+val.slice(pos);
+  const np=pos+1+indent.length;
+  ta.setSelectionRange(np,np);
+  ['d','e'].forEach(p=>{
+    const el=document.getElementById(p+'-ta');
+    if(!el._independent)el.value=ta.value;
+  });
+  renderMenu2();
+});
+
+// ============================================================
+// メニュー2 ヘッダ更新
+// ============================================================
+function updateMenu2Header(){
+  const d=document.getElementById('g-date').value;
+  const t=document.getElementById('g-time').value;
+  const w=getWeek(d);
+  const dEl=document.getElementById('m2-date-disp');
+  const tEl=document.getElementById('m2-time-disp');
+  const wEl=document.getElementById('wchip2');
+  if(dEl)dEl.textContent=d||'—';
+  if(tEl)tEl.textContent=t||'—';
+  if(wEl)wEl.textContent=w?`Week ${w}`:'Week —';
+  const src=document.getElementById('rpills');
+  const dst=document.getElementById('rpills2');
+  if(src&&dst)dst.innerHTML=src.innerHTML;
+  const row2=document.getElementById('menu2-topbar-row2');
+  const row1=document.getElementById('menu-topbar-row2');
+  if(row2&&row1){row2.className=row1.className;}
+}
+function updateGbarLabel2(panel){const grp=document.getElementById(panel+'-grp').value||'全員';const pool=document.getElementById(panel+'-pool').value||'短水路';const labelP=document.getElementById(panel==='c'?'mc-glabel-print':panel==='d'?'md-glabel-print':'me-glabel-print');const colorMap={'突破者':'#1565c0','未突破者':'#c62828','選抜':'#6a1b9a','社会人':'#2e7d32','全員':'#455a64'};const col=colorMap[grp]||'#455a64';if(labelP){labelP.textContent=pool+'・'+grp;labelP.style.background=col;labelP.style.display='inline-block';}}
+function openPrintOv2(){document.getElementById('psel-c').checked=false;document.getElementById('psel-d').checked=false;document.getElementById('psel-e').checked=false;document.getElementById('print2-ov').classList.add('open');}
+function closePrintOv2(){document.getElementById('print2-ov').classList.remove('open');}
+function execPrint2(mode){const allKeys=['c','d','e'];let sel;if(mode==='3up'){sel=['c','d','e'];}else{sel=allKeys.filter(p=>document.getElementById('psel-'+p).checked);if(sel.length===0){alert('印刷する画面を1つ以上選択してください');return;}}const inner=document.getElementById('menu2-print-inner');inner.innerHTML='';const panelMap={c:document.querySelector('#menu2-panels .m-panel:nth-child(1)'),d:document.querySelector('#menu2-panels .m-panel:nth-child(3)'),e:document.querySelector('#menu2-panels .m-panel:nth-child(5)')};const printSel=sel.length===1?[sel[0],sel[0]]:sel;inner.className='';if(printSel.length<=2){inner.classList.add('cols-'+(sel.length===1?'1':'2'));}else{inner.classList.add('cols-3');}printSel.forEach((key,idx)=>{if(idx>0){const sp=document.createElement('div');sp.className='m-print-spacer';inner.appendChild(sp);}const src=panelMap[key];if(!src)return;const clone=src.cloneNode(true);clone.className='m-print-panel';clone.removeAttribute('id');inner.appendChild(clone);});closePrintOv2();setTimeout(()=>{window.print();setTimeout(()=>{inner.innerHTML='';},600);},100);}
+
+// ============================================================
+// WEEK
+// ============================================================
+function getWeek(dateStr){const d=dateStr?new Date(dateStr+'T00:00:00'):new Date();const yr=d.getMonth()>=3?d.getFullYear():d.getFullYear()-1;const apr1=new Date(yr,3,1);const diff=d-apr1;if(diff<0)return null;return Math.floor(diff/86400000/7)+1;}
+function updateWeek(){const v=document.getElementById('g-date').value;const w=getWeek(v);document.getElementById('wchip').textContent=w?`Week ${w}`:'Week —';updateMenu2Header();}
+document.getElementById('g-date').addEventListener('change',()=>{updateWeek();updateRacePills();});
+
+// ============================================================
+// 試合データ
+// ============================================================
+(function(){try{var s=JSON.parse(localStorage.getItem('sw_races')||'[]');var ok=s.length===0||s.every(function(r){return r.date&&r.date.indexOf('-')>0&&r.date.length===10;});if(!ok){localStorage.removeItem('sw_races');}}catch(e){localStorage.removeItem('sw_races');}})();
+let races=JSON.parse(localStorage.getItem('sw_races')||'[]');
+let pinnedRaces=JSON.parse(localStorage.getItem('sw_pinned')||'[]');
+function loadCsvFile(input){const file=input.files[0];if(!file)return;const st=document.getElementById('m-rstatus');st.textContent='読み込み中…';st.style.color='';const reader=new FileReader();reader.onload=function(e){try{const txt=e.target.result;const rows=parseCSV(txt);let currentYear=2026;const parsed=rows.filter(r=>r.length>=3).map(r=>{const mCol=(r[0]||'').trim();const yearMatch=mCol.match(/^(\d{4})年$/);if(yearMatch)currentYear=parseInt(yearMatch[1]);const name=(r[1]||'').trim();const dateStr=(r[2]||'').trim();if(/\d{4}[\/\-]/.test(dateStr)){return{name,date:parseDate(dateStr)};}const md=dateStr.match(/^(\d{1,2})\/(\d{1,2})$/);if(md){return{name,date:`${currentYear}-${md[1].padStart(2,'0')}-${md[2].padStart(2,'0')}`};}return{name,date:null};}).filter(r=>r.date&&r.name&&r.name!=='試合名'&&r.name!=='2026年度試合日程(案)');if(parsed.length===0){st.textContent='⚠️ データが見つかりません';st.style.color='#c62828';return;}races=parsed;localStorage.setItem('sw_races',JSON.stringify(races));st.textContent='✅ '+races.length+'件読み込み完了！';st.style.color='#388e3c';renderRacePreview();updateRacePills();}catch(err){st.textContent='⚠️ 読み込み失敗';st.style.color='#c62828';}};reader.readAsText(file,'UTF-8');}
+function parseCSV(txt){return txt.trim().split('\n').map(line=>{const cols=[];let cur='',q=false;for(let i=0;i<line.length;i++){if(line[i]==='"'){q=!q;}else if(line[i]===','&&!q){cols.push(cur.trim());cur='';}else cur+=line[i];}cols.push(cur.trim());return cols;});}
+function parseDate(s){if(!s)return null;s=s.replace(/\s/g,'');let m;m=s.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);if(m)return`${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;m=s.replace(/[？?]/g,'').match(/(\d{1,2})月(\d{1,2})日/);if(m)return`2026-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;m=s.match(/^(\d{1,2})\/(\d{1,2})$/);if(m)return`2026-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;return null;}
+function updateRacePills(){updatePinnedRow2();}
+function renderRacePreview(){const today=new Date();today.setHours(0,0,0,0);const el=document.getElementById('rpreview');if(!races.length){el.innerHTML='<span style="color:#aaa">データなし</span>';return;}const sorted=[...races].map(r=>({...r,d:new Date(r.date+'T00:00:00')})).sort((a,b)=>a.d-b.d);el.innerHTML=sorted.map(r=>{const diff=Math.round((r.d-today)/86400000);const past=diff<0;const dispDate=`${r.d.getMonth()+1}/${r.d.getDate()}`;const lbl=diff>0?`残り${diff}日`:diff===0?'本日！':`${-diff}日前`;if(past)return`<div class="m-rrow" style="opacity:0.3;pointer-events:none"><span style="color:#999">🏅 ${r.name}</span><span style="color:#999">${dispDate} ${lbl}</span></div>`;const checked=pinnedRaces.includes(r.date);const disabled=!checked&&pinnedRaces.length>=3?'opacity:0.4;pointer-events:none':'';const chkStyle=checked?'accent-color:#f57c00':'';const chkBox=`<input type="checkbox" style="width:16px;height:16px;${chkStyle};cursor:pointer;flex-shrink:0" ${checked?'checked':''} onclick="event.stopPropagation();togglePin('${r.date}')">`;return`<div class="m-rrow" style="cursor:pointer;${disabled}" onclick="togglePin('${r.date}')">${chkBox}<span style="flex:1;font-weight:${checked?'700':'400'};color:${checked?'#1c2333':'#444'}">🏅 ${r.name}</span><span style="color:var(--blue);font-weight:700;white-space:nowrap;font-size:13px">${dispDate}　${lbl}</span></div>`;}).join('');}
+function clearRaceData(){if(!confirm('読み込んだ試合データをすべて削除しますか？'))return;races=[];pinnedRaces=[];localStorage.removeItem('sw_races');localStorage.removeItem('sw_pinned');document.getElementById('m-rstatus').textContent='🗑️ データを削除しました';document.getElementById('m-rstatus').style.color='#c62828';updatePinnedRow2();renderRacePreview();}
+function togglePin(date){if(pinnedRaces.includes(date)){pinnedRaces=pinnedRaces.filter(d=>d!==date);}else{if(pinnedRaces.length>=3)return;pinnedRaces.push(date);}localStorage.setItem('sw_pinned',JSON.stringify(pinnedRaces));updatePinnedRow2();renderRacePreview();}
+function updatePinnedRow2(){const row2=document.getElementById('menu-topbar-row2');const el=document.getElementById('rpills');if(!el)return;const today=new Date();today.setHours(0,0,0,0);if(!pinnedRaces.length){row2.classList.remove('visible');el.innerHTML='';['print-race-bar-m','print-race-bar-a','print-race-bar-b'].forEach(id=>{const b=document.getElementById(id);if(b)b.innerHTML='';});return;}row2.classList.add('visible');const tags=pinnedRaces.map(date=>{const r=races.find(x=>x.date===date);if(!r)return null;const d=new Date(date+'T00:00:00');const diff=Math.round((d-today)/86400000);if(diff<0)return null;const lbl=diff===0?'本日！':`残り${diff}日`;const col=diff<=7?'#c62828':diff<=30?'#e65100':'#1565c0';const dispDate=`${d.getMonth()+1}/${d.getDate()}`;return{pill:`<span class="m-rpill" style="border-color:${col};color:${col}">🏅 ${r.name}　${dispDate}（${lbl}）</span>`,tag:`<span class="m-print-race-tag">🏅 ${r.name}　${dispDate}（${lbl}）</span>`};}).filter(Boolean);if(!tags.length){row2.classList.remove('visible');el.innerHTML='';return;}el.innerHTML=tags.map(t=>t.pill).join('');const tagHtml=tags.map(t=>t.tag).join('');['print-race-bar-m','print-race-bar-a','print-race-bar-b'].forEach(id=>{const b=document.getElementById(id);if(b)b.innerHTML=tagHtml||'<span style="font-size:10px;color:#aaa">試合未選択</span>';});}
+function openRaceOv(){renderRacePreview();document.getElementById('race-ov').classList.add('open');}
+function closeRaceOv(){document.getElementById('race-ov').classList.remove('open');}
+
+// ============================================================
+// SELECT OPTIONS
+// ============================================================
+let poolOpts=['短水路','長水路'],grpOpts=['全員','突破者','未突破者','選抜','A班','B班','C班'];
+let addCtx={type:'',selId:''};
+function updateGbarLabel(panel){const grp=document.getElementById(panel+'-grp').value||'全員';const pool=document.getElementById(panel+'-pool').value||'短水路';const labelP=document.getElementById(panel==='m'?'mm-glabel-print':panel==='a'?'ma-glabel-print':'mb-glabel-print');const colorMap={'突破者':'#1565c0','未突破者':'#c62828','選抜':'#6a1b9a','社会人':'#2e7d32','全員':'#455a64'};const col=colorMap[grp]||'#455a64';if(labelP){labelP.textContent=pool+'・'+grp;labelP.style.background=col;labelP.style.display='inline-block';}}
+function fillSels(type){const opts=type==='pool'?poolOpts:grpOpts;const ids=type==='pool'?['m-pool','a-pool','b-pool','c-pool','d-pool','e-pool']:['m-grp','a-grp','b-grp','c-grp','d-grp','e-grp'];ids.forEach(id=>{const s=document.getElementById(id),cur=s.value;s.innerHTML=opts.map(o=>`<option${o===cur?' selected':''}>${o}</option>`).join('');});['m','a','b'].forEach(p=>updateGbarLabel(p));['c','d','e'].forEach(p=>updateGbarLabel2(p));}
+function openAddOv(type,selId){addCtx={type,selId};document.getElementById('add-title').textContent=type==='pool'?'🏊 水路を追加':'👥 対象者を追加';document.getElementById('add-subtitle').textContent=type==='pool'?'水路の選択肢を追加・削除できます':'対象グループの選択肢を追加・削除できます';document.getElementById('add-inp').value='';renderChips(type==='pool'?poolOpts:grpOpts);document.getElementById('add-ov').classList.add('open');setTimeout(()=>document.getElementById('add-inp').focus(),40);}
+function closeAddOv(){document.getElementById('add-ov').classList.remove('open');}
+function renderChips(opts){document.getElementById('add-chips').innerHTML=opts.map((o,i)=>`<span class="m-chip">${o}<span class="m-chipx" onclick="removeOpt(${i})">×</span></span>`).join('');}
+function doAdd(){const v=document.getElementById('add-inp').value.trim();if(!v)return;const opts=addCtx.type==='pool'?poolOpts:grpOpts;if(!opts.includes(v))opts.push(v);fillSels(addCtx.type);document.getElementById('add-inp').value='';renderChips(opts);saveSettings();}
+document.getElementById('add-inp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!(e.isComposing||e.keyCode===229))doAdd();});
+function removeOpt(i){const opts=addCtx.type==='pool'?poolOpts:grpOpts;opts.splice(i,1);fillSels(addCtx.type);renderChips(opts);saveSettings();}
+
+// ============================================================
+// 保存・読み込み
+// ============================================================
+function toast(msg){const el=document.createElement('div');el.textContent=msg;Object.assign(el.style,{position:'fixed',bottom:'22px',left:'50%',transform:'translateX(-50%)',background:'#333',color:'#fff',padding:'9px 22px',borderRadius:'22px',fontSize:'13px',fontWeight:'700',zIndex:'9999',boxShadow:'0 4px 12px rgba(0,0,0,.3)',transition:'opacity .4s'});document.body.appendChild(el);setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),400);},2000);}
+function saveAll(){localStorage.setItem('sw_data',JSON.stringify({date:document.getElementById('g-date').value,time:document.getElementById('g-time').value,mName:document.getElementById('m-name').textContent,aName:document.getElementById('a-name').textContent,bName:document.getElementById('b-name').textContent,cName:document.getElementById('c-name').textContent,dName:document.getElementById('d-name').textContent,eName:document.getElementById('e-name').textContent,mPool:document.getElementById('m-pool').value,mGrp:document.getElementById('m-grp').value,aPool:document.getElementById('a-pool').value,aGrp:document.getElementById('a-grp').value,bPool:document.getElementById('b-pool').value,bGrp:document.getElementById('b-grp').value,cPool:document.getElementById('c-pool').value,cGrp:document.getElementById('c-grp').value,dPool:document.getElementById('d-pool').value,dGrp:document.getElementById('d-grp').value,ePool:document.getElementById('e-pool').value,eGrp:document.getElementById('e-grp').value,text:document.getElementById('m-ta').value,aText:document.getElementById('a-ta').value,bText:document.getElementById('b-ta').value,cText:document.getElementById('c-ta').value,dText:document.getElementById('d-ta').value,eText:document.getElementById('e-ta').value}));toast('✅ 保存しました');}
+function saveSettings(){localStorage.setItem('sw_pools',JSON.stringify(poolOpts));localStorage.setItem('sw_grps',JSON.stringify(grpOpts));}
+function loadAll(){const po=localStorage.getItem('sw_pools'),go=localStorage.getItem('sw_grps');if(po)poolOpts=JSON.parse(po);if(go)grpOpts=JSON.parse(go);fillSels('pool');fillSels('grp');['m','a','b'].forEach(p=>updateGbarLabel(p));const raw=localStorage.getItem('sw_data');if(raw){try{const d=JSON.parse(raw);if(d.date)document.getElementById('g-date').value=d.date;if(d.time)document.getElementById('g-time').value=d.time;if(d.mName)document.getElementById('m-name').textContent=d.mName;if(d.aName)document.getElementById('a-name').textContent=d.aName;if(d.bName)document.getElementById('b-name').textContent=d.bName;if(d.mPool)document.getElementById('m-pool').value=d.mPool;if(d.mGrp)document.getElementById('m-grp').value=d.mGrp;if(d.aPool)document.getElementById('a-pool').value=d.aPool;if(d.aGrp)document.getElementById('a-grp').value=d.aGrp;if(d.bPool)document.getElementById('b-pool').value=d.bPool;if(d.bGrp)document.getElementById('b-grp').value=d.bGrp;if(d.text){document.getElementById('m-ta').value=d.text;const aEl=document.getElementById('a-ta');if(d.aText!==undefined){aEl.value=d.aText;aEl._independent=(d.aText!==d.text);}else{aEl.value=d.text;aEl._independent=false;}const bEl=document.getElementById('b-ta');if(d.bText!==undefined){bEl.value=d.bText;bEl._independent=(d.bText!==d.text);}else{bEl.value=d.text;bEl._independent=false;}}
+    if(d.cName)document.getElementById('c-name').textContent=d.cName;
+    if(d.dName)document.getElementById('d-name').textContent=d.dName;
+    if(d.eName)document.getElementById('e-name').textContent=d.eName;
+    if(d.cPool)document.getElementById('c-pool').value=d.cPool;
+    if(d.cGrp)document.getElementById('c-grp').value=d.cGrp;
+    if(d.dPool)document.getElementById('d-pool').value=d.dPool;
+    if(d.dGrp)document.getElementById('d-grp').value=d.dGrp;
+    if(d.ePool)document.getElementById('e-pool').value=d.ePool;
+    if(d.eGrp)document.getElementById('e-grp').value=d.eGrp;
+    if(d.cText!==undefined){document.getElementById('c-ta').value=d.cText;}
+    if(d.dText!==undefined){const dEl=document.getElementById('d-ta');dEl.value=d.dText;dEl._independent=(d.dText!==d.cText);}
+    if(d.eText!==undefined){const eEl=document.getElementById('e-ta');eEl.value=d.eText;eEl._independent=(d.eText!==d.cText);}
+    }catch(e){}}}
+
+// ============================================================
+// セーブパネル
+// ============================================================
+let _spOpen=false, _spDates=[], _spSelected='';
+function toggleSavePanel(forceOpen){
+  _spOpen = forceOpen===true ? true : !_spOpen;
+  const panel=document.getElementById('save-panel');
+  const btn=document.getElementById('btn-save-main');
+  panel.style.display=_spOpen?'block':'none';
+  if(btn){btn.classList.toggle('active',_spOpen);}
+  if(_spOpen){_spRefreshInfo();spFetchDates();}
+}
+function _spRefreshInfo(){
+  const date=document.getElementById('g-date').value||'—';
+  const start=document.getElementById('g-time').value||'—';
+  const mt=(document.getElementById('m-ta').value||'').trim();
+  const prev=mt?mt.slice(0,20)+(mt.length>20?'…':''):'（未入力）';
+  const el=document.getElementById('sp-save-chips');
+  if(el)el.innerHTML=
+    `<span class="sp-chip"><strong>日付</strong> ${date}</span>`+
+    `<span class="sp-chip"><strong>START</strong> ${start}</span>`+
+    `<span class="sp-chip"><strong>MASTER</strong> ${prev}</span>`;
+  _spLocalStatus();
+}
+function _spLocalStatus(){
+  const dot=document.getElementById('sp-local-dot');
+  const txt=document.getElementById('sp-local-text');
+  const has=!!localStorage.getItem('sw_data');
+  if(dot)dot.style.background=has?'#388e3c':'#e57373';
+  if(txt)txt.textContent=has?'ブラウザに保存済み':'未保存';
+}
+async function spFetchDates(){
+  const el=document.getElementById('sp-date-list');
+  if(!el)return;
+  el.innerHTML='<div style="padding:18px;text-align:center;font-size:11px;color:#aaa;">⏳ 取得中...</div>';
+  try{
+    const res=await fetch(GAS_URL+'?t='+Date.now());
+    const json=await res.json();
+    if(json.status==='ok'&&json.dates&&json.dates.length){
+      _spDates=json.dates;
+      _spRenderDates();
+    }else{
+      el.innerHTML='<div style="padding:14px;text-align:center;font-size:11px;color:#aaa;">保存データがありません</div>';
+    }
+  }catch(e){
+    el.innerHTML='<div style="padding:14px;text-align:center;font-size:11px;color:#e03c3c;">❌ 取得失敗</div>';
+  }
+}
+function _spRenderDates(){
+  const el=document.getElementById('sp-date-list');
+  if(!el)return;
+  const today=new Date();today.setHours(0,0,0,0);
+  el.innerHTML=_spDates.map(d=>{
+    const dObj=new Date(d.date+'T00:00:00');
+    const diff=Math.round((dObj-today)/86400000);
+    const lbl=diff===0?'今日':diff===-1?'昨日':diff<0?`${-diff}日前`:`${diff}日後`;
+    const meta=[d.poolM,d.grpM,d.poolA,d.grpA].filter(Boolean).join(' · ');
+    const act=d.date===_spSelected?'active':'';
+    return`<div class="sp-date-row ${act}" onclick="_spSelect('${d.date}')">
+      <div>
+        <div class="sp-date-main">${d.date}</div>
+        ${meta?`<div class="sp-date-meta">${meta}</div>`:''}
+      </div>
+      <div class="sp-date-lbl">${lbl}</div>
+    </div>`;
+  }).join('');
+}
+function _spSelect(date){_spSelected=date;_spRenderDates();}
+async function spSaveToSheet(){
+  const st=document.getElementById('sp-save-status');
+  st.textContent='⏳ 保存中...';st.style.color='#555';
+  const payload={
+    date:document.getElementById('g-date').value,
+    startTime:document.getElementById('g-time').value,
+    mPool:document.getElementById('m-pool').value,mGrp:document.getElementById('m-grp').value,
+    aPool:document.getElementById('a-pool').value,aGrp:document.getElementById('a-grp').value,
+    bPool:document.getElementById('b-pool').value,bGrp:document.getElementById('b-grp').value,
+    cPool:document.getElementById('c-pool').value,cGrp:document.getElementById('c-grp').value,
+    dPool:document.getElementById('d-pool').value,dGrp:document.getElementById('d-grp').value,
+    ePool:document.getElementById('e-pool').value,eGrp:document.getElementById('e-grp').value,
+    mText:document.getElementById('m-ta').value,aText:document.getElementById('a-ta').value,
+    bText:document.getElementById('b-ta').value,cText:document.getElementById('c-ta').value,
+    dText:document.getElementById('d-ta').value,eText:document.getElementById('e-ta').value
+  };
+  try{
+    await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload)});
+    st.textContent='✅ 保存しました！';st.style.color='#1e7e34';
+    saveAll();
+    setTimeout(()=>{st.textContent='';spFetchDates();},1800);
+  }catch(e){
+    st.textContent='✅ 送信しました（シートを確認）';st.style.color='#1e7e34';
+    saveAll();
+    setTimeout(()=>{st.textContent='';spFetchDates();},2000);
+  }
+}
+async function spLoadFromSheet(){
+  const st=document.getElementById('sp-load-status');
+  if(!_spSelected){st.textContent='❌ 日付を選択してください';st.style.color='#e03c3c';return;}
+  st.textContent='⏳ 読み込み中...';st.style.color='#555';
+  try{
+    const res=await fetch(GAS_URL+'?action=load&date='+_spSelected+'&t='+Date.now());
+    const json=await res.json();
+    if(json.status==='ok'&&json.data){
+      const d=json.data;
+      if(d.date)document.getElementById('g-date').value=d.date;
+      if(d.startTime)document.getElementById('g-time').value=d.startTime;
+      if(d.mPool)document.getElementById('m-pool').value=d.mPool;
+      if(d.mGrp)document.getElementById('m-grp').value=d.mGrp;
+      if(d.aPool)document.getElementById('a-pool').value=d.aPool;
+      if(d.aGrp)document.getElementById('a-grp').value=d.aGrp;
+      if(d.bPool)document.getElementById('b-pool').value=d.bPool;
+      if(d.bGrp)document.getElementById('b-grp').value=d.bGrp;
+      if(d.mText!==undefined)document.getElementById('m-ta').value=d.mText;
+      if(d.aText!==undefined){const el=document.getElementById('a-ta');el.value=d.aText;el._independent=d.aText!==d.mText;}
+      if(d.bText!==undefined){const el=document.getElementById('b-ta');el.value=d.bText;el._independent=d.bText!==d.mText;}
+      if(d.cPool)document.getElementById('c-pool').value=d.cPool;
+      if(d.cGrp)document.getElementById('c-grp').value=d.cGrp;
+      if(d.dPool)document.getElementById('d-pool').value=d.dPool;
+      if(d.dGrp)document.getElementById('d-grp').value=d.dGrp;
+      if(d.ePool)document.getElementById('e-pool').value=d.ePool;
+      if(d.eGrp)document.getElementById('e-grp').value=d.eGrp;
+      if(d.cText!==undefined)document.getElementById('c-ta').value=d.cText;
+      if(d.dText!==undefined){const el=document.getElementById('d-ta');el.value=d.dText;el._independent=d.dText!==d.cText;}
+      if(d.eText!==undefined){const el=document.getElementById('e-ta');el.value=d.eText;el._independent=d.eText!==d.cText;}
+      ['m','a','b'].forEach(p=>updateGbarLabel(p));
+      ['c','d','e'].forEach(p=>updateGbarLabel2(p));
+      updateWeek();updateRacePills();renderBoth();renderMenu2();saveAll();
+      st.textContent='✅ 読み込みました（'+_spSelected+'）';st.style.color='#1e7e34';
+      setTimeout(()=>{st.textContent='';},2000);
+    }else{
+      st.textContent='❌ データが見つかりません';st.style.color='#e03c3c';
+    }
+  }catch(e){
+    st.textContent='❌ 通信エラー';st.style.color='#e03c3c';
+  }
+}
+function spLocalSave(){
+  saveAll();
+  _spLocalStatus();
+  const st=document.getElementById('sp-local-status');
+  if(st){st.textContent='✅ 保存しました';st.style.color='#1e7e34';setTimeout(()=>st.textContent='',1500);}
+}
+
+// ============================================================
+// 印刷1
+// ============================================================
+function openPrintOv(){document.getElementById('psel-m').checked=false;document.getElementById('psel-a').checked=false;document.getElementById('psel-b').checked=false;document.getElementById('print-ov').classList.add('open');}
+function closePrintOv(){document.getElementById('print-ov').classList.remove('open');}
+function execPrint(mode){const allKeys=['m','a','b'];let sel;if(mode==='3up'){sel=['m','a','b'];}else{sel=allKeys.filter(p=>document.getElementById('psel-'+p).checked);if(sel.length===0){alert('印刷する画面を1つ以上選択してください');return;}}const inner=document.getElementById('menu-print-inner');inner.innerHTML='';const panelMap={m:document.querySelector('#menu-panels .m-panel:nth-child(1)'),a:document.querySelector('#menu-panels .m-panel:nth-child(3)'),b:document.querySelector('#menu-panels .m-panel:nth-child(5)')};const printSel=sel.length===1?[sel[0],sel[0]]:sel;inner.className='';if(printSel.length<=2){inner.classList.add('cols-'+(sel.length===1?'1':'2'));}else{inner.classList.add('cols-3');}printSel.forEach((key,idx)=>{if(idx>0){const sp=document.createElement('div');sp.className='m-print-spacer';inner.appendChild(sp);}const src=panelMap[key];if(!src)return;const clone=src.cloneNode(true);clone.className='m-print-panel';clone.removeAttribute('id');inner.appendChild(clone);});closePrintOv();setTimeout(()=>{window.print();setTimeout(()=>{inner.innerHTML='';},600);},100);}
+
+// ============================================================
+// PDF読み込み
+// ============================================================
+const PDF_SECTION_NAMES=['W-up','WUP','WARMUP','KICK','PULL','SWIM','MAIN','POWER','TECH','DIVE','RELAY-DIVE','DOWN','EZ','BROKEN','FP','AGILITY','OGITA','PRE-SWIM','SWIM (Total Best)','SWIM(Total Best)'];
+function isPdfSectionName(s){const t=s.trim();for(const name of PDF_SECTION_NAMES){if(t.toUpperCase()===name.toUpperCase())return true;if(t.toUpperCase().startsWith(name.toUpperCase()))return true;}return false;}
+function fixIndent(text){if(!text)return'';const lines=text.split('\n');const result=[];for(let i=0;i<lines.length;i++){const line=lines[i];const trimmed=line.trim();if(!trimmed){result.push('');continue;}if(/^\s/.test(line)){result.push(line);continue;}if(isPdfSectionName(trimmed)){result.push(trimmed);continue;}result.push('  '+trimmed);}return result.join('\n');}
+function openPdfOv(){document.getElementById('pdf-filename').textContent='クリックしてPDFを選択';document.getElementById('pdf-status').textContent='';document.getElementById('pdf-status').style.color='#555';document.getElementById('pdf-assign-area').style.display='none';document.getElementById('pdf-file').value='';document.getElementById('pdf-ov').classList.add('open');}
+function closePdfOv(){document.getElementById('pdf-ov').classList.remove('open');}
+async function onPdfSelected(inp){const file=inp.files[0];if(!file)return;document.getElementById('pdf-filename').textContent='📄 '+file.name;document.getElementById('pdf-status').textContent='⏳ AIがPDFを読み取り中...（10〜20秒）';document.getElementById('pdf-status').style.color='#1565c0';document.getElementById('pdf-assign-area').style.display='none';try{const base64=await new Promise((res,rej)=>{const reader=new FileReader();reader.onload=()=>res(reader.result.split(',')[1]);reader.onerror=()=>rej(new Error('ファイル読み取り失敗'));reader.readAsDataURL(file);});let response;try{response=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'pdfOcr',base64})});}catch(e){throw new Error('GASへの通信に失敗しました');}let data;try{data=await response.json();}catch(e){throw new Error('GASからの応答が不正です。再デプロイしてください。');}if(data.status==='error')throw new Error(data.message||'GASエラー');if(data.date){document.getElementById('g-date').value=data.date;updateWeek();}if(data.startTime)document.getElementById('g-time').value=data.startTime;const cols=[{text:data.col1||'',label:data.col1_label||'左列',dest:'m'},{text:data.col2||'',label:data.col2_label||'中列',dest:'a'},{text:data.col3||'',label:data.col3_label||'右列',dest:'b'}];[1,2,3].forEach((n,i)=>{document.getElementById('pdf-col'+n+'-text').value=fixIndent(cols[i].text);document.getElementById('pdf-col'+n+'-label').textContent=cols[i].label;document.getElementById('pdf-col'+n+'-dest').value=cols[i].dest;});if(!data.col2&&!data.col3){document.getElementById('pdf-col2-dest').value='';document.getElementById('pdf-col3-dest').value='';}document.getElementById('pdf-assign-area').style.display='flex';document.getElementById('pdf-status').textContent='✅ 読み取り完了！各列の内容を確認して割り当てを選んでください';document.getElementById('pdf-status').style.color='#388e3c';}catch(err){document.getElementById('pdf-status').textContent='❌ '+err.message;document.getElementById('pdf-status').style.color='#c62828';}}
+function applyPdfCols(){const applied=[];[1,2,3].forEach(n=>{const dest=document.getElementById('pdf-col'+n+'-dest').value;const text=fixIndent(document.getElementById('pdf-col'+n+'-text').value.trim());if(!dest||!text)return;const taId=dest+'-ta';document.getElementById(taId).value=text;if(dest==='a'||dest==='b'){document.getElementById(taId)._independent=true;}if(dest==='d'||dest==='e'){document.getElementById(taId)._independent=true;}const labelMap={m:'MASTER',a:'ADJUST',b:'ADJUST2',c:'ADJUST3',d:'ADJUST4',e:'ADJUST5'};applied.push(labelMap[dest]||dest);});if(!applied.length){alert('割り当て先を選択してください');return;}renderBoth();renderMenu2();saveAll();closePdfOv();toast('✅ '+applied.join('・')+' に入力しました');}
+
+// ============================================================
+// 初期化
+// ============================================================
+document.getElementById('g-date').value=new Date().toISOString().slice(0,10);
+updatePinnedRow2();
+loadAll();
+updateWeek();
+updateRacePills();
+renderBoth();
+renderMenu2();
+</script>
+
+
+</body></html>
