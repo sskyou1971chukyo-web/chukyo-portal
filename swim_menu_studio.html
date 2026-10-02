@@ -4003,23 +4003,25 @@ function renderWeekRow(){
   h += '<button type="button" class="btn small ghost wkEdit" id="wsEdit" title="週間スケジュールを設定" aria-label="週間スケジュールを設定"><span class="pcOnly">週間スケジュールを設定</span><span class="phoneOnly">⚙</span></button>';
   box.innerHTML = h;
 }
-/* 曜日ボタン：その週のその日・その時刻のメニューへ（なければ新しく作る） */
+/* 曜日ボタン：今のメニューの中身はそのままで、日付・開始時刻・水路だけを変える */
 function goWeekSlot(d, k){
   const s = weekSched()[d][k]; if(!s) return;
   const date = addDays(mondayOf(M.date), d), start = fmtClock(s.start);
-  const ex = Object.values(S.menus).find(m => m.date === date && fmtClock(m.start) === start);
-  if(ex){ openMenu(date, ex.session); }
-  else {
+  if(saveTimer) saveNow();
+  if(M.date !== date){
+    // 移す先の日の、空いている枠を使う
     const free = SESSIONS.find(x => !S.menus[menuId(date, x)]);
-    if(!free){ toast('この日のメニューは4つまでです'); return; }
-    const panels = M.panels;
-    openMenu(date, free);
-    if(!S.menus[M.id]) M.panels = panels.map(p => ({team:p.team, stroke:p.stroke || '', text:'', print:p.print}));
-    M.start = start; M.pool = s.pool;
-    renderMenuView();
+    if(!free){ toast('この日にはメニューが4つあるので、移せません'); return; }
+    const had = !!S.menus[M.id];
+    delete S.menus[M.id];
+    M.date = date; M.session = free; M.id = menuId(date, free);
+    if(had || menuHasContent(M)) S.menus[M.id] = M;
   }
-  if(fmtClock(M.start) !== start || M.pool !== s.pool){ M.start = start; M.pool = s.pool; if(menuHasContent(M)) commitMenu(); renderMenuView(); }
-  toast(WS_DAYS[d] + '曜 ' + jpDate(date) + '　' + start + '開始　' + s.pool + 'に切りかえました');
+  M.start = start; M.pool = s.pool;
+  S.settings.lastStart = start; S.settings.lastPool = s.pool;
+  commitMenu(); renderMenuView();
+  const others = Object.values(S.menus).filter(m => m !== M && m.date === date && menuHasContent(m)).length;
+  toast('日時を ' + WS_DAYS[d] + '曜 ' + jpDate(date) + '　' + start + '開始　' + s.pool + ' に変えました。メニューの中身はそのままです' + (others ? '（この日にはほかのメニューも' + others + 'つあります）' : ''), 5000);
 }
 /* 設定の画面 */
 function openWeekSched(){
